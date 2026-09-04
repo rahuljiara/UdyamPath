@@ -1,0 +1,23 @@
+{
+  "name": "udyampath",
+  "version": "1.0.0",
+  "description": "UdyamPath - College Placement Management System (From Campus to Career)",
+  "private": true,
+  "scripts": {
+    "client": "npm run dev --prefix client",
+    "client:build": "npm run build --prefix client",
+    "server": "npm run dev --prefix server",
+    "server:start": "node server/server.js",
+    "seed": "npm run seed --prefix server",
+    "dev": "npm run dev --prefix client"
+  },
+  "keywords": [
+    "placement-management",
+    "tpo",
+    "college",
+    "career",
+    "mern"
+  ],
+  "author": "rahuljiara",
+  "license": "ISC"
+}
