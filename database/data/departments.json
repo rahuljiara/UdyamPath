@@ -1,0 +1,62 @@
+[
+  {
+    "name": "Computer Science & Engineering",
+    "code": "CSE",
+    "hod": "Dr. Arisudan Sharma",
+    "hodEmail": "hod.cse@college.edu.in",
+    "description": "Premier department focusing on Algorithms, AI/ML, Cloud Computing, Distributed Systems, and Fullstack Engineering.",
+    "studentCount": 30,
+    "placedStudents": 20,
+    "averagePackage": "22.8 LPA",
+    "highestPackage": "52.0 LPA",
+    "isActive": true
+  },
+  {
+    "name": "Information Technology",
+    "code": "IT",
+    "hod": "Dr. Meenakshi Sundaram",
+    "hodEmail": "hod.it@college.edu.in",
+    "description": "Specialized department focusing on Enterprise Systems, Cloud Architecture, DevOps, Cybersecurity, and Big Data Analytics.",
+    "studentCount": 25,
+    "placedStudents": 14,
+    "averagePackage": "18.4 LPA",
+    "highestPackage": "46.0 LPA",
+    "isActive": true
+  },
+  {
+    "name": "Electronics & Communication",
+    "code": "ECE",
+    "hod": "Dr. Rajeshwar Rao",
+    "hodEmail": "hod.ece@college.edu.in",
+    "description": "Department concentrating on Embedded Systems, VLSI Design, IoT, Digital Signal Processing, and Wireless Communication.",
+    "studentCount": 20,
+    "placedStudents": 9,
+    "averagePackage": "16.5 LPA",
+    "highestPackage": "28.0 LPA",
+    "isActive": true
+  },
+  {
+    "name": "Electrical & Electronics",
+    "code": "EEE",
+    "hod": "Dr. Sunita Deshmukh",
+    "hodEmail": "hod.eee@college.edu.in",
+    "description": "Specialized in Power Systems, Renewable Energy, Electric Mobility, Industrial Automation, and Smart Grid Engineering.",
+    "studentCount": 15,
+    "placedStudents": 6,
+    "averagePackage": "12.8 LPA",
+    "highestPackage": "19.5 LPA",
+    "isActive": true
+  },
+  {
+    "name": "Mechanical Engineering",
+    "code": "MECH",
+    "hod": "Dr. Vikramaditya Sen",
+    "hodEmail": "hod.mech@college.edu.in",
+    "description": "Focusing on CAD/CAM, Robotics & Automation, Finite Element Analysis, Thermal Engineering, and Sustainable Manufacturing.",
+    "studentCount": 10,
+    "placedStudents": 4,
+    "averagePackage": "8.4 LPA",
+    "highestPackage": "9.0 LPA",
+    "isActive": true
+  }
+]

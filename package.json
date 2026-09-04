@@ -8,7 +8,7 @@
     "client:build": "npm run build --prefix client",
     "server": "npm run dev --prefix server",
     "server:start": "node server/server.js",
-    "seed": "npm run seed --prefix server",
+    "seed": "node database/seed.js",
     "dev": "npm run dev --prefix client"
   },
   "keywords": [

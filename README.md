@@ -63,29 +63,17 @@ UdyamPath replaces fragmented spreadsheets, documents, emails, and manual tracki
 
 ```
 project/
-├── client/
-│   ├── src/
-│   │   ├── assets/
-│   │   ├── components/
-│   │   │   ├── common/         # StatCard, Table, Badge, Button, Avatar, Modal, etc.
-│   │   │   ├── layout/         # AppLayout, Sidebar, Header
-│   │   │   ├── dashboard/      # Placement charts, funnel, live drives, interviews
-│   │   │   ├── students/       # Student management components
-│   │   │   ├── companies/      # Company directories & profiles
-│   │   │   ├── drives/         # Placement drive workflows
-│   │   │   └── applications/   # Application stage trackers
-│   │   ├── pages/              # Route page containers
-│   │   ├── routes/             # paths.js & AppRoutes.jsx
-│   │   ├── services/           # API-ready service layer (mock -> Express)
-│   │   ├── data/               # Realistic Indian college mock JSON datasets
-│   │   ├── utils/              # Formatting & helper utilities
-│   │   ├── App.jsx
-│   │   ├── main.jsx
-│   │   └── index.css
-│   ├── tailwind.config.js
-│   ├── vite.config.js
-│   └── package.json
-├── server/                     # Backend API (Node/Express/Mongo)
+├── client/                     # React.js + Vite Frontend Application
+├── server/                     # Express.js + Mongoose Backend REST API
+├── database/                   # Modular Database Engine, JSON Backups & Seeders
+│   ├── config/                 # Connection & environment loader
+│   ├── models/                 # DRY Mongoose schema definitions
+│   ├── definitions/            # Seed data definitions & student generator
+│   ├── seeders/                # Modular collection seeders & aggregations
+│   ├── data/                   # 9 Structured JSON Collection Backups
+│   ├── seed.js                 # Master Seeder Orchestrator
+│   ├── package.json
+│   └── README.md
 ├── .gitignore
 ├── README.md
 └── package.json

@@ -1,0 +1,62 @@
+[
+  {
+    "name": "Prof. Ramesh K. Verma",
+    "email": "admin@udyampath.com",
+    "role": "ADMIN",
+    "avatar": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=128&auto=format&fit=crop&q=60"
+  },
+  {
+    "name": "Dr. Rahul Deshmukh",
+    "email": "tpo.director@college.edu.in",
+    "role": "TPO",
+    "avatar": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=128&auto=format&fit=crop&q=60"
+  },
+  {
+    "name": "Dr. Arisudan Sharma",
+    "email": "hod.cse@college.edu.in",
+    "role": "HOD",
+    "avatar": "https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=128&auto=format&fit=crop&q=60"
+  },
+  {
+    "name": "Dr. Meenakshi Sundaram",
+    "email": "hod.it@college.edu.in",
+    "role": "HOD",
+    "avatar": "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=128&auto=format&fit=crop&q=60"
+  },
+  {
+    "name": "Dr. Rajeshwar Rao",
+    "email": "hod.ece@college.edu.in",
+    "role": "HOD",
+    "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=128&auto=format&fit=crop&q=60"
+  },
+  {
+    "name": "Dr. Sunita Deshmukh",
+    "email": "hod.eee@college.edu.in",
+    "role": "HOD",
+    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=128&auto=format&fit=crop&q=60"
+  },
+  {
+    "name": "Dr. Vikramaditya Sen",
+    "email": "hod.mech@college.edu.in",
+    "role": "HOD",
+    "avatar": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=128&auto=format&fit=crop&q=60"
+  },
+  {
+    "name": "Sneha Kulkarni",
+    "email": "recruiter@microsoft.com",
+    "role": "RECRUITER",
+    "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=128&auto=format&fit=crop&q=60"
+  },
+  {
+    "name": "Anand Nair",
+    "email": "recruiter@google.com",
+    "role": "RECRUITER",
+    "avatar": "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=128&auto=format&fit=crop&q=60"
+  },
+  {
+    "name": "Ramanathan Iyer",
+    "email": "recruiter@tcs.com",
+    "role": "RECRUITER",
+    "avatar": "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=128&auto=format&fit=crop&q=60"
+  }
+]

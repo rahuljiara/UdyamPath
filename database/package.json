@@ -1,0 +1,9 @@
+{
+  "name": "udyampath-database",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "UdyamPath Database Engine & Master Seeder",
+  "scripts": {
+    "seed": "node seed.js"
+  }
+}

@@ -1,51 +1,129 @@
+# ==========================================
 # Dependencies
+# ==========================================
+node_modules/
+*/node_modules/
 **/node_modules/
 
-# Build output
-**/dist/
-**/build/
-
-# Environment variables
+# ==========================================
+# Environment Variables & Sensitive Credentials
+# ==========================================
+.env
+.env.*
+*.env
 **/.env
 **/.env.*
 !.env.example
 !.env.example.*
+!**/.env.example
+!**/.env.example.*
 
+# Private Keys & Certificates
+*.pem
+*.key
+*.cert
+*.crt
+*.pfx
+*.p12
+id_rsa
+id_rsa.pub
+*.id_rsa
+
+# Cloud & Service Account Keys
+credentials.json
+client_secret*.json
+serviceAccountKey*.json
+firebase-adminsdk*.json
+google-services.json
+*.keystore
+
+# Auth Tokens & Configs
+.npmrc
+.yarnrc
+
+# ==========================================
+# Build & Distribution Outputs
+# ==========================================
+dist/
+build/
+out/
+**/dist/
+**/build/
+**/out/
+
+# ==========================================
 # Logs
+# ==========================================
+logs/
+*.log
 **/*.log
-**/npm-debug.log*
-**/yarn-debug.log*
-**/yarn-error.log*
-**/pnpm-debug.log*
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
 
-# Cache
+# ==========================================
+# Cache & Runtime State
+# ==========================================
+.cache/
+.vite/
+.eslintcache
+.stylelintcache
+.turbo/
+.next/
+.nuxt/
 **/.cache/
 **/.vite/
-**/.eslintcache
 
-# Coverage
+# ==========================================
+# Testing & Coverage
+# ==========================================
+coverage/
 **/coverage/
+.nyc_output/
 **/.nyc_output/
 
-# OS files
+# ==========================================
+# Operating System & IDE Files
+# ==========================================
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
 Thumbs.db
 desktop.ini
 
-# IDE / Editor
-.vscode/*
-!.vscode/extensions.json
-!.vscode/settings.json
+# IDEs & Editors
 .idea/
 *.swp
 *.swo
+*.swn
+.project
+.classpath
+.settings/
 
-# Temporary files
+# VS Code (Allow helpful team settings/extensions, ignore local state)
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
+
+# ==========================================
+# Deployment & Hosting
+# ==========================================
+.vercel/
+.netlify/
+
+# Temporary / Backup Files
+*.tmp
+*.temp
 **/*.tmp
 **/*.temp
-
-# Vercel
-.vercel/
-
-# Miscellaneous
+*.bak
+*.swp
 *.tgz
