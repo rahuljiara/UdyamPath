@@ -1,0 +1,52 @@
+[
+  {
+    "id": "dept-1",
+    "name": "Computer Science & Engineering",
+    "code": "CSE",
+    "hod": "Dr. Arisudan Sharma",
+    "totalStudents": 420,
+    "placedStudents": 358,
+    "averagePackage": "8.5 LPA",
+    "highestPackage": "44.0 LPA"
+  },
+  {
+    "id": "dept-2",
+    "name": "Information Technology",
+    "code": "IT",
+    "hod": "Dr. Meenakshi Sundaram",
+    "totalStudents": 240,
+    "placedStudents": 204,
+    "averagePackage": "7.8 LPA",
+    "highestPackage": "32.0 LPA"
+  },
+  {
+    "id": "dept-3",
+    "name": "Electronics & Communication",
+    "code": "ECE",
+    "hod": "Dr. Rajeshwar Rao",
+    "totalStudents": 300,
+    "placedStudents": 218,
+    "averagePackage": "6.2 LPA",
+    "highestPackage": "22.5 LPA"
+  },
+  {
+    "id": "dept-4",
+    "name": "Electrical & Electronics",
+    "code": "EEE",
+    "hod": "Dr. Sunita Deshmukh",
+    "totalStudents": 180,
+    "placedStudents": 112,
+    "averagePackage": "5.6 LPA",
+    "highestPackage": "16.0 LPA"
+  },
+  {
+    "id": "dept-5",
+    "name": "Mechanical Engineering",
+    "code": "MECH",
+    "hod": "Dr. Vikramaditya Sen",
+    "totalStudents": 200,
+    "placedStudents": 98,
+    "averagePackage": "5.2 LPA",
+    "highestPackage": "14.0 LPA"
+  }
+]

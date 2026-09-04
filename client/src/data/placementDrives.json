@@ -1,0 +1,127 @@
+[
+  {
+    "id": "drive-1",
+    "driveId": "DRV202501",
+    "companyId": "comp-1",
+    "companyName": "Microsoft India",
+    "companyLogo": "https://images.unsplash.com/photo-1642132652859-3ef5a1048fd1?w=128&auto=format&fit=crop&q=60",
+    "title": "Software Development Engineer - 1",
+    "jobType": "Full-Time",
+    "location": "Hyderabad / Bengaluru",
+    "ctc": "44.0 LPA",
+    "salaryBreakup": "Base: 18.0 LPA | Stocks: $40,000 / 4 yrs | Joining Bonus: 5.0 LPA",
+    "openings": 15,
+    "applicationsCount": 248,
+    "shortlistedCount": 32,
+    "applicationDeadline": "2025-03-25T23:59:59Z",
+    "driveDate": "2025-03-28",
+    "status": "Open",
+    "eligibility": {
+      "minCgpa": 8.0,
+      "maxBacklogs": 0,
+      "departments": ["Computer Science & Engineering", "Information Technology", "Electronics & Communication"],
+      "courses": ["B.Tech", "M.Tech"],
+      "batches": ["2021-2025"]
+    },
+    "selectionProcess": [
+      "Online Coding Assessment (2 DSA Questions)",
+      "Technical Round 1 (Problem Solving & CS Fundamentals)",
+      "Technical Round 2 (System Design & Code Quality)",
+      "AA (As Appropriate / Leadership Principles & Fit)"
+    ],
+    "description": "We are seeking exceptional software engineers with strong algorithmic problem solving skills to join our Cloud + AI engineering teams."
+  },
+  {
+    "id": "drive-2",
+    "driveId": "DRV202502",
+    "companyId": "comp-3",
+    "companyName": "Zomato",
+    "companyLogo": "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=128&auto=format&fit=crop&q=60",
+    "title": "Backend Software Engineer",
+    "jobType": "Full-Time",
+    "location": "Gurugram, Haryana",
+    "ctc": "28.0 LPA",
+    "salaryBreakup": "Base: 20.0 LPA | Retention & ESOPs: 8.0 LPA",
+    "openings": 10,
+    "applicationsCount": 182,
+    "shortlistedCount": 24,
+    "applicationDeadline": "2025-03-20T23:59:59Z",
+    "driveDate": "2025-03-24",
+    "status": "Open",
+    "eligibility": {
+      "minCgpa": 7.5,
+      "maxBacklogs": 0,
+      "departments": ["Computer Science & Engineering", "Information Technology"],
+      "courses": ["B.Tech"],
+      "batches": ["2021-2025"]
+    },
+    "selectionProcess": [
+      "Online Hackathon (API Development)",
+      "Technical Round 1 (Concurrency, DB & Architecture)",
+      "Founder's / Culture Round"
+    ],
+    "description": "Build high-throughput systems powering millions of orders per day at extreme sub-second latencies."
+  },
+  {
+    "id": "drive-3",
+    "driveId": "DRV202503",
+    "companyId": "comp-4",
+    "companyName": "Deloitte USI",
+    "companyLogo": "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=128&auto=format&fit=crop&q=60",
+    "title": "Associate Solution Advisor (Tech Consulting)",
+    "jobType": "Full-Time",
+    "location": "Hyderabad / Bengaluru",
+    "ctc": "11.5 LPA",
+    "salaryBreakup": "Base: 9.5 LPA | Variable & Benefits: 2.0 LPA",
+    "openings": 40,
+    "applicationsCount": 420,
+    "shortlistedCount": 85,
+    "applicationDeadline": "2025-03-18T23:59:59Z",
+    "driveDate": "2025-03-22",
+    "status": "Open",
+    "eligibility": {
+      "minCgpa": 6.8,
+      "maxBacklogs": 0,
+      "departments": ["Computer Science & Engineering", "Information Technology", "Electronics & Communication", "Electrical & Electronics", "Mechanical Engineering"],
+      "courses": ["B.Tech", "MCA"],
+      "batches": ["2021-2025"]
+    },
+    "selectionProcess": [
+      "Online Aptitude + Coding Assessment",
+      "Group Discussion / Case Study",
+      "Technical & Partner Interview"
+    ],
+    "description": "Join our Technology Consulting practice to deliver high impact enterprise digital transformation solutions."
+  },
+  {
+    "id": "drive-4",
+    "driveId": "DRV202504",
+    "companyId": "comp-2",
+    "companyName": "Tata Consultancy Services",
+    "companyLogo": "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=128&auto=format&fit=crop&q=60",
+    "title": "TCS Digital / Innovator Cadre",
+    "jobType": "Full-Time",
+    "location": "Pan India",
+    "ctc": "7.5 - 9.0 LPA",
+    "salaryBreakup": "Digital: 7.5 LPA | Prime/Innovator: 9.0 LPA",
+    "openings": 120,
+    "applicationsCount": 610,
+    "shortlistedCount": 160,
+    "applicationDeadline": "2025-03-12T23:59:59Z",
+    "driveDate": "2025-03-16",
+    "status": "In Progress",
+    "eligibility": {
+      "minCgpa": 6.5,
+      "maxBacklogs": 1,
+      "departments": ["Computer Science & Engineering", "Information Technology", "Electronics & Communication", "Electrical & Electronics", "Mechanical Engineering"],
+      "courses": ["B.Tech"],
+      "batches": ["2021-2025"]
+    },
+    "selectionProcess": [
+      "TCS NQT (National Qualifier Test)",
+      "Technical Interview",
+      "HR & Managerial Round"
+    ],
+    "description": "Premium engineering track for top talent to work on next-generation AI, IoT, Cloud, and Blockchain platforms."
+  }
+]

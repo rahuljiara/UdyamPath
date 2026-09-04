@@ -1,0 +1,38 @@
+{
+  "overview": {
+    "totalStudents": 1340,
+    "eligibleStudents": 1150,
+    "totalApplications": 3480,
+    "placedStudents": 990,
+    "placementRate": "86.1%",
+    "activeDrives": 6,
+    "averagePackage": "8.2 LPA",
+    "highestPackage": "44.0 LPA",
+    "totalCompanies": 48
+  },
+  "placementFunnel": [
+    { "stage": "Registered", "count": 1340, "percentage": 100 },
+    { "stage": "Eligible", "count": 1150, "percentage": 85.8 },
+    { "stage": "Applied", "count": 1020, "percentage": 76.1 },
+    { "stage": "Shortlisted", "count": 640, "percentage": 47.7 },
+    { "stage": "Interviewed", "count": 410, "percentage": 30.5 },
+    { "stage": "Selected", "count": 285, "percentage": 21.2 }
+  ],
+  "monthlyTrend": [
+    { "month": "Aug", "placed": 45, "offers": 52, "drives": 4 },
+    { "month": "Sep", "placed": 110, "offers": 135, "drives": 8 },
+    { "month": "Oct", "placed": 215, "offers": 260, "drives": 14 },
+    { "month": "Nov", "placed": 380, "offers": 440, "drives": 18 },
+    { "month": "Dec", "placed": 540, "offers": 610, "drives": 12 },
+    { "month": "Jan", "placed": 710, "offers": 830, "drives": 15 },
+    { "month": "Feb", "placed": 890, "offers": 1020, "drives": 16 },
+    { "month": "Mar", "placed": 990, "offers": 1140, "drives": 9 }
+  ],
+  "departmentDistribution": [
+    { "name": "CSE", "placed": 358, "total": 420, "rate": 85.2 },
+    { "name": "IT", "placed": 204, "total": 240, "rate": 85.0 },
+    { "name": "ECE", "placed": 218, "total": 300, "rate": 72.6 },
+    { "name": "EEE", "placed": 112, "total": 180, "rate": 62.2 },
+    { "name": "MECH", "placed": 98, "total": 200, "rate": 49.0 }
+  ]
+}
