@@ -1,123 +1,106 @@
+import api from './api';
 import initialStudents from '../data/students.json';
-import initialApplications from '../data/applications.json';
 
-let studentsList = [...initialStudents];
-let applicationsList = [...initialApplications];
+const formatStudent = (s) => ({
+  ...s,
+  id: s._id || s.id,
+  _id: s._id || s.id
+});
 
 export const studentService = {
   getAll: async (params = {}) => {
-    await new Promise((resolve) => setTimeout(resolve, 60));
-    let result = [...studentsList];
+    try {
+      const res = await api.get('/students', { params });
+      const items = (res.data || []).map(formatStudent);
+      const pagination = res.pagination || {};
 
-    if (params.search) {
-      const q = params.search.toLowerCase();
-      result = result.filter(
-        (s) =>
-          s.fullName.toLowerCase().includes(q) ||
-          s.studentId.toLowerCase().includes(q) ||
-          s.email.toLowerCase().includes(q) ||
-          (s.skills && s.skills.some((sk) => sk.toLowerCase().includes(q)))
-      );
+      return {
+        students: items,
+        total: pagination.total !== undefined ? pagination.total : items.length,
+        page: pagination.page || Number(params.page) || 1,
+        totalPages: pagination.totalPages || Math.ceil((pagination.total || items.length) / (params.limit || 10)) || 1
+      };
+    } catch (err) {
+      console.warn('[studentService] Fallback to local data:', err.message);
+      let result = [...initialStudents];
+      if (params.search) {
+        const q = params.search.toLowerCase();
+        result = result.filter(
+          (s) =>
+            s.fullName.toLowerCase().includes(q) ||
+            s.studentId.toLowerCase().includes(q) ||
+            s.email.toLowerCase().includes(q)
+        );
+      }
+      if (params.department && params.department !== 'All') {
+        result = result.filter(
+          (s) => s.deptCode === params.department || s.department === params.department
+        );
+      }
+      return {
+        students: result.slice(0, Number(params.limit) || 10).map(formatStudent),
+        total: result.length,
+        page: Number(params.page) || 1,
+        totalPages: Math.ceil(result.length / (Number(params.limit) || 10)) || 1
+      };
     }
-    if (params.department && params.department !== 'All') {
-      result = result.filter(
-        (s) => s.deptCode === params.department || s.department === params.department
-      );
-    }
-    if (params.batch && params.batch !== 'All') {
-      result = result.filter((s) => s.batch === params.batch);
-    }
-    if (params.status && params.status !== 'All') {
-      result = result.filter((s) => s.placementStatus === params.status);
-    }
-
-    const total = result.length;
-    const page = Number(params.page) || 1;
-    const limit = Number(params.limit) || 10;
-    const start = (page - 1) * limit;
-    const paginated = result.slice(start, start + limit);
-
-    return {
-      students: paginated,
-      total,
-      page,
-      totalPages: Math.ceil(total / limit) || 1
-    };
   },
 
   getStats: async () => {
-    await new Promise((resolve) => setTimeout(resolve, 40));
-    const total = studentsList.length;
-    const placed = studentsList.filter((s) => s.placementStatus === 'Placed').length;
-    const eligible = studentsList.filter((s) => s.isEligible).length;
-    const totalCgpa = studentsList.reduce((acc, s) => acc + (Number(s.cgpa) || 0), 0);
-    const avgCgpa = total > 0 ? (totalCgpa / total).toFixed(2) : '0.00';
-    const placementRate = total > 0 ? `${((placed / total) * 100).toFixed(1)}%` : '0%';
-
-    return {
-      total,
-      placed,
-      eligible,
-      avgCgpa,
-      placementRate
-    };
+    try {
+      const res = await api.get('/students/stats');
+      return res.data || res;
+    } catch (err) {
+      console.warn('[studentService] Fallback to computed stats:', err.message);
+      const total = initialStudents.length;
+      const placed = initialStudents.filter((s) => s.placementStatus === 'Placed').length;
+      const eligible = initialStudents.filter((s) => s.isEligible).length;
+      const totalCgpa = initialStudents.reduce((acc, s) => acc + (Number(s.cgpa) || 0), 0);
+      return {
+        total,
+        placed,
+        eligible,
+        avgCgpa: total > 0 ? (totalCgpa / total).toFixed(2) : '0.00',
+        placementRate: total > 0 ? `${((placed / total) * 100).toFixed(1)}%` : '0%'
+      };
+    }
   },
 
   getById: async (id) => {
-    await new Promise((resolve) => setTimeout(resolve, 60));
-    const student = studentsList.find((s) => s.id === id || s.studentId === id);
-    if (!student) throw new Error('Student not found');
-    return student;
+    try {
+      const res = await api.get(`/students/${id}`);
+      return formatStudent(res.data || res);
+    } catch (err) {
+      console.warn('[studentService] Fallback getById:', err.message);
+      const student = initialStudents.find((s) => s.id === id || s.studentId === id || s._id === id);
+      if (!student) throw new Error('Student not found');
+      return formatStudent(student);
+    }
   },
 
   getStudentApplications: async (studentId) => {
-    await new Promise((resolve) => setTimeout(resolve, 60));
-    return applicationsList.filter((a) => a.studentId === studentId);
+    try {
+      const res = await api.get('/applications', { params: { student: studentId } });
+      return (res.data || []).map((a) => ({ ...a, id: a._id || a.id }));
+    } catch (err) {
+      return [];
+    }
   },
 
   create: async (studentData) => {
-    await new Promise((resolve) => setTimeout(resolve, 80));
-    const newStudent = {
-      ...studentData,
-      id: `stud-${Date.now()}`,
-      fullName: `${studentData.firstName || ''} ${studentData.lastName || ''}`.trim(),
-      skills: Array.isArray(studentData.skills)
-        ? studentData.skills
-        : (studentData.skills || '').split(',').map((s) => s.trim()).filter(Boolean),
-      programmingLanguages: Array.isArray(studentData.programmingLanguages)
-        ? studentData.programmingLanguages
-        : (studentData.programmingLanguages || '').split(',').map((s) => s.trim()).filter(Boolean),
-      createdAt: new Date().toISOString()
-    };
-    studentsList.unshift(newStudent);
-    return newStudent;
+    const res = await api.post('/students', studentData);
+    return formatStudent(res.data || res);
   },
 
   update: async (id, studentData) => {
-    await new Promise((resolve) => setTimeout(resolve, 80));
-    const index = studentsList.findIndex((s) => s.id === id || s.studentId === id);
-    if (index === -1) throw new Error('Student not found');
-
-    const updated = {
-      ...studentsList[index],
-      ...studentData,
-      fullName: `${studentData.firstName || studentsList[index].firstName} ${studentData.lastName || studentsList[index].lastName}`.trim(),
-      skills: Array.isArray(studentData.skills)
-        ? studentData.skills
-        : (studentData.skills || '').split(',').map((s) => s.trim()).filter(Boolean),
-      programmingLanguages: Array.isArray(studentData.programmingLanguages)
-        ? studentData.programmingLanguages
-        : (studentData.programmingLanguages || '').split(',').map((s) => s.trim()).filter(Boolean),
-      updatedAt: new Date().toISOString()
-    };
-
-    studentsList[index] = updated;
-    return updated;
+    const res = await api.put(`/students/${id}`, studentData);
+    return formatStudent(res.data || res);
   },
 
   delete: async (id) => {
-    await new Promise((resolve) => setTimeout(resolve, 80));
-    studentsList = studentsList.filter((s) => s.id !== id && s.studentId !== id);
-    return { success: true };
+    const res = await api.delete(`/students/${id}`);
+    return res.data || res;
   }
 };
+
+export default studentService;

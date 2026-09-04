@@ -1,0 +1,188 @@
+================================================================================
+UDYAMPATH - DEMO USER CREDENTIALS & LOGIN DIRECTORY
+Platform: College Placement Management System (From Campus to Career)
+================================================================================
+
+GLOBAL DEFAULT PASSWORD FOR ALL ACCOUNTS:
+----------------------------------------
+password123
+
+
+================================================================================
+1. INSTITUTIONAL LEADERSHIP & TPO ACCOUNTS
+================================================================================
+
+Role: ADMIN / DIRECTOR
+Name: Prof. Ramesh K. Verma
+Email: admin@udyampath.com
+Password: password123
+Permissions: Full System Access, Institutional Settings, Audit Logs
+
+Role: TPO (TRAINING & PLACEMENT OFFICER)
+Name: Dr. Rahul Deshmukh
+Email: tpo.director@college.edu.in
+Password: password123
+Permissions: Placement Drives, Company Approvals, Student Shortlisting, Analytics
+
+
+================================================================================
+2. HEAD OF DEPARTMENT (HOD) ACCOUNTS
+================================================================================
+
+Role: HOD - COMPUTER SCIENCE & ENGINEERING (CSE)
+Name: Dr. Arisudan Sharma
+Email: hod.cse@college.edu.in
+Password: password123
+Department: Computer Science & Engineering (CSE)
+
+Role: HOD - INFORMATION TECHNOLOGY (IT)
+Name: Dr. Meenakshi Sundaram
+Email: hod.it@college.edu.in
+Password: password123
+Department: Information Technology (IT)
+
+Role: HOD - ELECTRONICS & COMMUNICATION (ECE)
+Name: Dr. Rajeshwar Rao
+Email: hod.ece@college.edu.in
+Password: password123
+Department: Electronics & Communication Engineering (ECE)
+
+Role: HOD - ELECTRICAL & ELECTRONICS (EEE)
+Name: Dr. Sunita Deshmukh
+Email: hod.eee@college.edu.in
+Password: password123
+Department: Electrical & Electronics Engineering (EEE)
+
+Role: HOD - MECHANICAL ENGINEERING (MECH)
+Name: Dr. Vikramaditya Sen
+Email: hod.mech@college.edu.in
+Password: password123
+Department: Mechanical Engineering (MECH)
+
+
+================================================================================
+3. RECRUITER / CORPORATE PARTNER ACCOUNTS
+================================================================================
+
+Role: RECRUITER (MICROSOFT INDIA)
+Name: Sneha Kulkarni
+Email: recruiter@microsoft.com
+Password: password123
+Company: Microsoft India
+
+Role: RECRUITER (GOOGLE INDIA)
+Name: Anand Nair
+Email: recruiter@google.com
+Password: password123
+Company: Google India
+
+Role: RECRUITER (TATA CONSULTANCY SERVICES)
+Name: Ramanathan Iyer
+Email: recruiter@tcs.com
+Password: password123
+Company: Tata Consultancy Services (TCS)
+
+
+================================================================================
+4. SAMPLE CANDIDATE / STUDENT ACCOUNTS (BY DEPARTMENT)
+================================================================================
+
+--- COMPUTER SCIENCE & ENGINEERING (CSE) ---
+Student ID: 2021CSE001
+Name: Rahul Sharma
+Email: rahul.sha21@college.edu.in
+Password: password123
+Status: Placed (Microsoft India - 44.0 LPA) | CGPA: 8.92
+
+Student ID: 2021CSE002
+Name: Devansh Verma
+Email: devansh.ver22@college.edu.in
+Password: password123
+Status: Shortlisted | CGPA: 8.45
+
+Student ID: 2021CSE005
+Name: Aarav Patel
+Email: aarav.pat25@college.edu.in
+Password: password123
+Status: Placed (Google India - 48.0 LPA) | CGPA: 9.42
+
+Student ID: 2021CSE006
+Name: Ishita Sen
+Email: ishita.sen26@college.edu.in
+Password: password123
+Status: Placed (Amazon Web Services - 36.0 LPA) | CGPA: 9.15
+
+
+--- INFORMATION TECHNOLOGY (IT) ---
+Student ID: 2021IT001
+Name: Ananya Deshpande
+Email: ananya.des51@college.edu.in
+Password: password123
+Status: Placed (Zomato - 28.0 LPA) | CGPA: 9.35
+
+Student ID: 2021IT002
+Name: Pooja Iyer
+Email: pooja.iye52@college.edu.in
+Password: password123
+Status: Applied | CGPA: 7.64
+
+Student ID: 2021IT012
+Name: Sakshi Tanwar
+Email: sakshi.tan62@college.edu.in
+Password: password123
+Status: Placed (Microsoft India - 42.0 LPA) | CGPA: 9.05
+
+
+--- ELECTRONICS & COMMUNICATION (ECE) ---
+Student ID: 2021ECE002
+Name: Tushar Soni
+Email: tushar.son77@college.edu.in
+Password: password123
+Status: Placed (Qualcomm India - 24.0 LPA) | CGPA: 8.90
+
+Student ID: 2021ECE003
+Name: Ankita Banerjee
+Email: ankita.ban78@college.edu.in
+Password: password123
+Status: Placed (Texas Instruments - 21.0 LPA) | CGPA: 8.40
+
+
+--- ELECTRICAL & ELECTRONICS (EEE) ---
+Student ID: 2021EEE001
+Name: Siddharth Nambiar
+Email: siddharth.nam97@college.edu.in
+Password: password123
+Status: Placed (Cisco Systems - 16.0 LPA) | CGPA: 8.12
+
+Student ID: 2021EEE006
+Name: Harini Sridhar
+Email: harini.sri22@college.edu.in
+Password: password123
+Status: Placed (Schneider Electric - 14.0 LPA) | CGPA: 8.90
+
+
+--- MECHANICAL ENGINEERING (MECH) ---
+Student ID: 2021MECH003
+Name: Pranav Deshmukh
+Email: pranav.des33@college.edu.in
+Password: password123
+Status: Placed (L&T Technology Services - 8.5 LPA) | CGPA: 8.65
+
+Student ID: 2021MECH004
+Name: Ira Goswami
+Email: ira.gos34@college.edu.in
+Password: password123
+Status: Placed (Mahindra & Mahindra - 9.0 LPA) | CGPA: 8.30
+
+
+================================================================================
+QUICK CLI TESTING GUIDE:
+================================================================================
+Login via curl / PowerShell:
+POST http://localhost:5000/api/auth/login
+Content-Type: application/json
+Body: { "email": "tpo.director@college.edu.in", "password": "password123" }
+
+Frontend Portal:
+http://localhost:3000
+================================================================================

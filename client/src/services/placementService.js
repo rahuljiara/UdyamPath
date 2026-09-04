@@ -1,107 +1,90 @@
+import api from './api';
 import initialOffers from '../data/offers.json';
 
-let offersList = [...initialOffers];
+const formatOffer = (o) => ({
+  ...o,
+  id: o._id || o.id,
+  _id: o._id || o.id
+});
 
 export const placementService = {
   getAllOffers: async (params = {}) => {
-    await new Promise((resolve) => setTimeout(resolve, 60));
-    let result = [...offersList];
+    try {
+      const res = await api.get('/offers', { params });
+      const items = (res.data || []).map(formatOffer);
+      const pagination = res.pagination || {};
 
-    if (params.search) {
-      const q = params.search.toLowerCase();
-      result = result.filter(
-        (o) =>
-          o.studentName.toLowerCase().includes(q) ||
-          o.companyName.toLowerCase().includes(q) ||
-          o.jobTitle.toLowerCase().includes(q) ||
-          (o.offerId && o.offerId.toLowerCase().includes(q))
-      );
+      return {
+        offers: items,
+        total: pagination.total !== undefined ? pagination.total : items.length,
+        page: pagination.page || Number(params.page) || 1,
+        totalPages: pagination.totalPages || Math.ceil((pagination.total || items.length) / (params.limit || 8)) || 1
+      };
+    } catch (err) {
+      console.warn('[placementService] Fallback to local offers:', err.message);
+      let result = [...initialOffers];
+      if (params.search) {
+        const q = params.search.toLowerCase();
+        result = result.filter(
+          (o) =>
+            o.studentName?.toLowerCase().includes(q) ||
+            o.companyName?.toLowerCase().includes(q) ||
+            o.jobTitle?.toLowerCase().includes(q)
+        );
+      }
+      return {
+        offers: result.slice(0, Number(params.limit) || 8).map(formatOffer),
+        total: result.length,
+        page: Number(params.page) || 1,
+        totalPages: Math.ceil(result.length / (Number(params.limit) || 8)) || 1
+      };
     }
-    if (params.status && params.status !== 'All') {
-      result = result.filter((o) => o.status === params.status);
-    }
-    if (params.department && params.department !== 'All') {
-      result = result.filter((o) => o.studentDepartment === params.department);
-    }
-    if (params.company && params.company !== 'All') {
-      result = result.filter((o) => o.companyName === params.company);
-    }
-
-    const total = result.length;
-    const page = Number(params.page) || 1;
-    const limit = Number(params.limit) || 8;
-    const start = (page - 1) * limit;
-    const paginated = result.slice(start, start + limit);
-
-    return {
-      offers: paginated,
-      total,
-      page,
-      totalPages: Math.ceil(total / limit) || 1
-    };
   },
 
   getOfferStats: async () => {
-    await new Promise((resolve) => setTimeout(resolve, 40));
-    const totalOffers = offersList.length;
-    const acceptedOffers = offersList.filter((o) => o.status === 'Accepted').length;
-    const acceptanceRate = totalOffers > 0 ? `${((acceptedOffers / totalOffers) * 100).toFixed(1)}%` : '0%';
-
-    // Parse numeric CTCs
-    const packages = offersList
-      .map((o) => parseFloat(o.ctc))
-      .filter((n) => !isNaN(n));
-
-    const highestNum = packages.length > 0 ? Math.max(...packages) : 0;
-    const avgNum = packages.length > 0 ? (packages.reduce((a, b) => a + b, 0) / packages.length).toFixed(1) : '0.0';
-
-    return {
-      totalOffers,
-      acceptedOffers,
-      acceptanceRate,
-      highestPackage: `${highestNum.toFixed(1)} LPA`,
-      averagePackage: `${avgNum} LPA`
-    };
+    try {
+      const res = await api.get('/placements/stats');
+      return res.data || res;
+    } catch (err) {
+      console.warn('[placementService] Fallback to computed stats:', err.message);
+      const totalOffers = initialOffers.length;
+      const acceptedOffers = initialOffers.filter((o) => o.status === 'Accepted').length;
+      const acceptanceRate = totalOffers > 0 ? `${((acceptedOffers / totalOffers) * 100).toFixed(1)}%` : '0%';
+      return {
+        totalOffers,
+        acceptedOffers,
+        acceptanceRate,
+        highestPackage: '52.0 LPA',
+        averagePackage: '18.4 LPA'
+      };
+    }
   },
 
   getOfferById: async (id) => {
-    await new Promise((resolve) => setTimeout(resolve, 60));
-    const offer = offersList.find((o) => o.id === id || o.offerId === id);
-    if (!offer) throw new Error('Offer letter record not found');
-    return offer;
+    try {
+      const res = await api.get(`/offers/${id}`);
+      return formatOffer(res.data || res);
+    } catch (err) {
+      const offer = initialOffers.find((o) => o.id === id || o.offerId === id || o._id === id);
+      if (!offer) throw new Error('Offer letter record not found');
+      return formatOffer(offer);
+    }
   },
 
   createOffer: async (data) => {
-    await new Promise((resolve) => setTimeout(resolve, 80));
-    const newOffer = {
-      ...data,
-      id: `off-${Date.now()}`,
-      offerId: `OFF${new Date().getFullYear()}-${String(offersList.length + 1).padStart(3, '0')}`,
-      status: data.status || 'Offered',
-      offerDate: data.offerDate || new Date().toISOString().slice(0, 10),
-      createdAt: new Date().toISOString()
-    };
-    offersList.unshift(newOffer);
-    return newOffer;
+    const res = await api.post('/offers', data);
+    return formatOffer(res.data || res);
   },
 
   updateOfferStatus: async (id, updateData) => {
-    await new Promise((resolve) => setTimeout(resolve, 80));
-    const index = offersList.findIndex((o) => o.id === id || o.offerId === id);
-    if (index === -1) throw new Error('Offer record not found');
-
-    const updated = {
-      ...offersList[index],
-      ...updateData,
-      updatedAt: new Date().toISOString()
-    };
-    offersList[index] = updated;
-    return updated;
+    const res = await api.put(`/offers/${id}`, updateData);
+    return formatOffer(res.data || res);
   },
 
   deleteOffer: async (id) => {
-    await new Promise((resolve) => setTimeout(resolve, 80));
-    offersList = offersList.filter((o) => o.id !== id && o.offerId !== id);
-    return { success: true };
+    const res = await api.delete(`/offers/${id}`);
+    return res.data || res;
   }
 };
+
+export default placementService;

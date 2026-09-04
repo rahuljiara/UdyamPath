@@ -1,74 +1,47 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { authService } from '../services/authService';
 
 export const USER_ROLES = {
   ADMIN: 'admin',
   MANAGER: 'manager',
-  STUDENT: 'student'
+  STUDENT: 'student',
+  RECRUITER: 'recruiter'
 };
 
-// Predefined personas representing Admin, Manager (HOD), and Candidate (Student)
-export const MOCK_USERS = [
-  {
-    id: 'usr-admin-1',
-    name: 'Dr. Rahul Deshmukh',
-    role: USER_ROLES.ADMIN,
-    roleTitle: 'Head TPO / Director',
-    roleBadge: 'Admin / HR Head',
-    department: 'Institute Level',
-    deptCode: 'ALL',
-    email: 'tpo.director@college.edu.in',
-    avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=128&auto=format&fit=crop&q=60',
-    permissions: ['ALL']
-  },
-  {
-    id: 'usr-mgr-1',
-    name: 'Dr. Arisudan Sharma',
-    role: USER_ROLES.MANAGER,
-    roleTitle: 'HOD & Dept Coordinator',
-    roleBadge: 'Manager / HOD (CSE)',
-    department: 'Computer Science & Engineering',
-    deptCode: 'CSE',
-    email: 'hod.cse@college.edu.in',
-    avatar: 'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=128&auto=format&fit=crop&q=60',
-    permissions: ['DEPT_VIEW', 'DEPT_VERIFY', 'DEPT_REPORTS', 'DRIVES_VIEW', 'APPLICATIONS_VIEW']
-  },
-  {
-    id: 'stud-1',
-    name: 'Rahul Sharma',
-    role: USER_ROLES.STUDENT,
-    roleTitle: 'B.Tech CSE Candidate',
-    roleBadge: 'Candidate',
-    studentId: '21BCS045',
-    department: 'Computer Science & Engineering',
-    deptCode: 'CSE',
-    batch: '2021-2025',
-    cgpa: 9.42,
-    backlogs: 0,
-    email: 'rahul.sharma@college.edu.in',
-    phone: '+91 98765 43210',
-    placementStatus: 'Placed',
-    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=128&auto=format&fit=crop&q=60',
-    permissions: ['SELF_VIEW', 'APPLY_DRIVE', 'OFFERS_ACCEPT', 'PROFILE_EDIT']
-  },
-  {
-    id: 'stud-3',
-    name: 'Devansh Verma',
-    role: USER_ROLES.STUDENT,
-    roleTitle: 'B.Tech CSE Candidate',
-    roleBadge: 'Candidate',
-    studentId: '21BCS012',
-    department: 'Computer Science & Engineering',
-    deptCode: 'CSE',
-    batch: '2021-2025',
-    cgpa: 8.45,
-    backlogs: 0,
-    email: 'devansh.verma@college.edu.in',
-    phone: '+91 98765 43212',
-    placementStatus: 'In Process',
-    avatar: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=128&auto=format&fit=crop&q=60',
-    permissions: ['SELF_VIEW', 'APPLY_DRIVE', 'OFFERS_ACCEPT', 'PROFILE_EDIT']
-  }
-];
+const normalizeRole = (role) => {
+  if (!role) return USER_ROLES.STUDENT;
+  const upper = String(role).toUpperCase();
+  if (upper === 'ADMIN' || upper === 'TPO') return USER_ROLES.ADMIN;
+  if (upper === 'HOD' || upper === 'MANAGER') return USER_ROLES.MANAGER;
+  if (upper === 'STUDENT') return USER_ROLES.STUDENT;
+  if (upper === 'RECRUITER') return USER_ROLES.RECRUITER;
+  return role.toLowerCase();
+};
+
+const formatUser = (user) => {
+  if (!user) return null;
+  const role = normalizeRole(user.role);
+  const roleTitle =
+    user.role === 'TPO'
+      ? 'Head TPO / Director'
+      : user.role === 'ADMIN'
+      ? 'Institutional Admin'
+      : user.role === 'HOD'
+      ? `HOD (${user.department || 'Department'})`
+      : user.role === 'RECRUITER'
+      ? 'Corporate Recruiter'
+      : 'Candidate (Student)';
+
+  return {
+    ...user,
+    id: user._id || user.id,
+    _id: user._id || user.id,
+    role,
+    roleTitle: user.roleTitle || roleTitle,
+    roleBadge: user.roleBadge || user.role || 'Member',
+    permissions: user.permissions || ['ALL']
+  };
+};
 
 const AuthContext = createContext(null);
 
@@ -77,55 +50,86 @@ export const AuthProvider = ({ children }) => {
     const saved = localStorage.getItem('udyam_auth_user');
     if (saved) {
       try {
-        const parsed = JSON.parse(saved);
-        const match = MOCK_USERS.find((u) => u.id === parsed.id);
-        if (match) return match;
+        return formatUser(JSON.parse(saved));
       } catch (err) {
-        console.error('Error restoring user session:', err);
+        console.error('Error parsing stored user session:', err);
       }
     }
-    return MOCK_USERS[0]; // Default to Admin
+    return null;
   });
 
-  useEffect(() => {
-    localStorage.setItem('udyam_auth_user', JSON.stringify(currentUser));
-  }, [currentUser]);
+  const [loading, setLoading] = useState(true);
 
-  const switchUser = (userId) => {
-    const target = MOCK_USERS.find((u) => u.id === userId);
-    if (target) {
-      setCurrentUser(target);
-    }
+  // Verify JWT session on initial application load
+  useEffect(() => {
+    const initSession = async () => {
+      const token = authService.getToken();
+      if (!token) {
+        setCurrentUser(null);
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const user = await authService.getMe();
+        if (user) {
+          const enhanced = formatUser(user);
+          setCurrentUser(enhanced);
+          localStorage.setItem('udyam_auth_user', JSON.stringify(enhanced));
+        } else {
+          setCurrentUser(null);
+          authService.logout();
+        }
+      } catch (err) {
+        console.warn('Session verification failed, clearing auth state:', err.message);
+        authService.logout();
+        setCurrentUser(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    initSession();
+  }, []);
+
+  const login = async (email, password) => {
+    const data = await authService.login({ email, password });
+    const user = data.user || data;
+    const formatted = formatUser(user);
+    setCurrentUser(formatted);
+    localStorage.setItem('udyam_auth_user', JSON.stringify(formatted));
+    return formatted;
   };
 
-  const switchRole = (role) => {
-    const target = MOCK_USERS.find((u) => u.role === role);
-    if (target) {
-      setCurrentUser(target);
-    }
+  const logout = () => {
+    authService.logout();
+    setCurrentUser(null);
   };
 
   const hasPermission = (permission) => {
     if (!currentUser) return false;
-    if (currentUser.permissions.includes('ALL')) return true;
-    return currentUser.permissions.includes(permission);
+    if (currentUser.permissions?.includes('ALL')) return true;
+    return currentUser.permissions?.includes(permission);
   };
 
-  const isRole = (role) => currentUser?.role === role;
+  const currentRole = currentUser?.role || USER_ROLES.STUDENT;
+  const isRole = (role) => currentRole === role;
 
   return (
     <AuthContext.Provider
       value={{
         currentUser,
-        role: currentUser?.role || USER_ROLES.ADMIN,
-        availableUsers: MOCK_USERS,
-        switchUser,
-        switchRole,
+        role: currentRole,
+        loading,
+        login,
+        logout,
         hasPermission,
         isRole,
         isAdmin: isRole(USER_ROLES.ADMIN),
         isManager: isRole(USER_ROLES.MANAGER),
-        isStudent: isRole(USER_ROLES.STUDENT)
+        isStudent: isRole(USER_ROLES.STUDENT),
+        isRecruiter: isRole(USER_ROLES.RECRUITER),
+        isAuthenticated: !!currentUser
       }}
     >
       {children}
@@ -140,3 +144,5 @@ export const useAuth = () => {
   }
   return context;
 };
+
+export default AuthContext;

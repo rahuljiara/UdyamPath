@@ -1,177 +1,113 @@
+import api from './api';
 import initialDrives from '../data/placementDrives.json';
-import initialApplications from '../data/applications.json';
-import initialInterviews from '../data/interviews.json';
 
-let drivesList = [...initialDrives];
-let applicationsList = [...initialApplications];
-let interviewsList = [...initialInterviews];
+const formatDrive = (d) => ({
+  ...d,
+  id: d._id || d.id,
+  _id: d._id || d.id
+});
 
 export const driveService = {
   getAll: async (params = {}) => {
-    await new Promise((resolve) => setTimeout(resolve, 60));
-    let result = [...drivesList];
+    try {
+      const res = await api.get('/drives', { params });
+      const items = (res.data || []).map(formatDrive);
+      const pagination = res.pagination || {};
 
-    if (params.search) {
-      const q = params.search.toLowerCase();
-      result = result.filter(
-        (d) =>
-          d.title.toLowerCase().includes(q) ||
-          d.companyName.toLowerCase().includes(q) ||
-          d.location.toLowerCase().includes(q) ||
-          d.driveId.toLowerCase().includes(q)
-      );
+      return {
+        drives: items,
+        total: pagination.total !== undefined ? pagination.total : items.length,
+        page: pagination.page || Number(params.page) || 1,
+        totalPages: pagination.totalPages || Math.ceil((pagination.total || items.length) / (params.limit || 8)) || 1
+      };
+    } catch (err) {
+      console.warn('[driveService] Fallback to local drives:', err.message);
+      let result = [...initialDrives];
+      if (params.search) {
+        const q = params.search.toLowerCase();
+        result = result.filter(
+          (d) =>
+            d.title.toLowerCase().includes(q) ||
+            d.companyName.toLowerCase().includes(q) ||
+            d.location?.toLowerCase().includes(q)
+        );
+      }
+      return {
+        drives: result.slice(0, Number(params.limit) || 8).map(formatDrive),
+        total: result.length,
+        page: Number(params.page) || 1,
+        totalPages: Math.ceil(result.length / (Number(params.limit) || 8)) || 1
+      };
     }
-    if (params.status && params.status !== 'All') {
-      result = result.filter((d) => d.status === params.status);
-    }
-    if (params.company && params.company !== 'All') {
-      result = result.filter((d) => d.companyName === params.company || d.companyId === params.company);
-    }
-    if (params.jobType && params.jobType !== 'All') {
-      result = result.filter((d) => d.jobType === params.jobType);
-    }
-
-    const total = result.length;
-    const page = Number(params.page) || 1;
-    const limit = Number(params.limit) || 8;
-    const start = (page - 1) * limit;
-    const paginated = result.slice(start, start + limit);
-
-    return {
-      drives: paginated,
-      total,
-      page,
-      totalPages: Math.ceil(total / limit) || 1
-    };
   },
 
   getStats: async () => {
-    await new Promise((resolve) => setTimeout(resolve, 40));
-    const totalDrives = drivesList.length;
-    const activeDrives = drivesList.filter((d) => d.status === 'Open' || d.status === 'In Progress').length;
-    const totalOpenings = drivesList.reduce((sum, d) => sum + (Number(d.openings) || 0), 0);
-    const totalApplications = drivesList.reduce((sum, d) => sum + (Number(d.applicationsCount) || 0), 0);
-
-    return {
-      totalDrives,
-      activeDrives,
-      totalOpenings,
-      totalApplications
-    };
+    try {
+      const res = await api.get('/drives/stats');
+      return res.data || res;
+    } catch (err) {
+      console.warn('[driveService] Fallback to drive stats:', err.message);
+      return {
+        totalDrives: initialDrives.length,
+        activeDrives: initialDrives.filter((d) => d.status === 'Open' || d.status === 'In Progress').length,
+        totalOpenings: initialDrives.reduce((sum, d) => sum + (Number(d.openings) || 0), 0),
+        totalApplications: initialDrives.reduce((sum, d) => sum + (Number(d.applicationsCount) || 0), 0)
+      };
+    }
   },
 
   getById: async (id) => {
-    await new Promise((resolve) => setTimeout(resolve, 60));
-    const drive = drivesList.find((d) => d.id === id || d.driveId === id);
-    if (!drive) throw new Error('Placement drive not found');
-    return drive;
+    try {
+      const res = await api.get(`/drives/${id}`);
+      return formatDrive(res.data || res);
+    } catch (err) {
+      const drive = initialDrives.find((d) => d.id === id || d.driveId === id || d._id === id);
+      if (!drive) throw new Error('Placement drive not found');
+      return formatDrive(drive);
+    }
   },
 
   getDriveApplications: async (driveId) => {
-    await new Promise((resolve) => setTimeout(resolve, 60));
-    return applicationsList.filter((a) => a.driveId === driveId);
+    try {
+      const res = await api.get('/applications', { params: { drive: driveId } });
+      return (res.data || []).map((a) => ({ ...a, id: a._id || a.id }));
+    } catch (err) {
+      return [];
+    }
   },
 
   getDriveInterviews: async (driveId, companyName) => {
-    await new Promise((resolve) => setTimeout(resolve, 60));
-    return interviewsList.filter(
-      (i) => i.companyName?.toLowerCase() === companyName?.toLowerCase()
-    );
+    try {
+      const res = await api.get('/interviews', { params: { drive: driveId, company: companyName } });
+      return (res.data || []).map((i) => ({ ...i, id: i._id || i.id }));
+    } catch (err) {
+      return [];
+    }
   },
 
   applyToDrive: async (driveId, student) => {
-    await new Promise((resolve) => setTimeout(resolve, 80));
-    const drive = drivesList.find((d) => d.id === driveId || d.driveId === driveId);
-    if (!drive) throw new Error('Placement drive not found');
-
-    // Prevent duplicate application
-    const existing = applicationsList.find(
-      (a) => (a.driveId === drive.id || a.driveId === drive.driveId) && (a.studentId === student.id || a.studentEmail === student.email)
-    );
-    if (existing) {
-      throw new Error('You have already submitted an application for this placement drive.');
+    try {
+      const res = await api.post(`/drives/${driveId}/apply`, { studentId: student?.id || student?._id });
+      return res.data || res;
+    } catch (err) {
+      throw err;
     }
-
-    const newApp = {
-      id: `app-${Date.now()}`,
-      applicationId: `APP2025-${String(applicationsList.length + 1).padStart(3, '0')}`,
-      studentId: student.id,
-      studentName: student.fullName,
-      studentEmail: student.email,
-      studentDepartment: student.deptCode || 'CSE',
-      studentCgpa: student.cgpa,
-      studentAvatar: student.avatar,
-      driveId: drive.id,
-      companyName: drive.companyName,
-      position: drive.title,
-      appliedAt: new Date().toISOString(),
-      currentStage: 'Application',
-      status: 'Applied',
-      notes: 'Applied through candidate portal.'
-    };
-
-    applicationsList.unshift(newApp);
-
-    // Increment drive application count
-    drive.applicationsCount = (drive.applicationsCount || 0) + 1;
-
-    return newApp;
   },
 
   create: async (driveData) => {
-    await new Promise((resolve) => setTimeout(resolve, 80));
-    const newDrive = {
-      ...driveData,
-      id: `drive-${Date.now()}`,
-      driveId: driveData.driveId || `DRV${new Date().getFullYear()}${String(drivesList.length + 1).padStart(2, '0')}`,
-      applicationsCount: 0,
-      shortlistedCount: 0,
-      status: driveData.status || 'Open',
-      eligibility: {
-        minCgpa: Number(driveData.minCgpa) || 6.5,
-        maxBacklogs: Number(driveData.maxBacklogs) || 0,
-        departments: Array.isArray(driveData.departments) ? driveData.departments : ['Computer Science & Engineering', 'Information Technology'],
-        courses: Array.isArray(driveData.courses) ? driveData.courses : ['B.Tech'],
-        batches: Array.isArray(driveData.batches) ? driveData.batches : ['2021-2025']
-      },
-      selectionProcess: Array.isArray(driveData.selectionProcess)
-        ? driveData.selectionProcess
-        : (driveData.selectionProcess || '').split('\n').filter(Boolean),
-      createdAt: new Date().toISOString()
-    };
-    drivesList.unshift(newDrive);
-    return newDrive;
+    const res = await api.post('/drives', driveData);
+    return formatDrive(res.data || res);
   },
 
   update: async (id, driveData) => {
-    await new Promise((resolve) => setTimeout(resolve, 80));
-    const index = drivesList.findIndex((d) => d.id === id || d.driveId === id);
-    if (index === -1) throw new Error('Placement drive not found');
-
-    const updated = {
-      ...drivesList[index],
-      ...driveData,
-      eligibility: {
-        minCgpa: Number(driveData.minCgpa ?? drivesList[index].eligibility?.minCgpa) || 6.5,
-        maxBacklogs: Number(driveData.maxBacklogs ?? drivesList[index].eligibility?.maxBacklogs) || 0,
-        departments: driveData.departments || drivesList[index].eligibility?.departments || [],
-        courses: driveData.courses || drivesList[index].eligibility?.courses || [],
-        batches: driveData.batches || drivesList[index].eligibility?.batches || []
-      },
-      selectionProcess: Array.isArray(driveData.selectionProcess)
-        ? driveData.selectionProcess
-        : typeof driveData.selectionProcess === 'string'
-        ? driveData.selectionProcess.split('\n').filter(Boolean)
-        : drivesList[index].selectionProcess,
-      updatedAt: new Date().toISOString()
-    };
-    drivesList[index] = updated;
-    return updated;
+    const res = await api.put(`/drives/${id}`, driveData);
+    return formatDrive(res.data || res);
   },
 
   delete: async (id) => {
-    await new Promise((resolve) => setTimeout(resolve, 80));
-    drivesList = drivesList.filter((d) => d.id !== id && d.driveId !== id);
-    return { success: true };
+    const res = await api.delete(`/drives/${id}`);
+    return res.data || res;
   }
 };
+
+export default driveService;

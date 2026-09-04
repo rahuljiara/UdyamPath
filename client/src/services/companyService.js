@@ -1,120 +1,104 @@
+import api from './api';
 import initialCompanies from '../data/companies.json';
-import initialDrives from '../data/placementDrives.json';
-import initialStudents from '../data/students.json';
 
-let companiesList = [...initialCompanies];
-let drivesList = [...initialDrives];
-let studentsList = [...initialStudents];
+const formatCompany = (c) => ({
+  ...c,
+  id: c._id || c.id,
+  _id: c._id || c.id
+});
 
 export const companyService = {
   getAll: async (params = {}) => {
-    await new Promise((resolve) => setTimeout(resolve, 60));
-    let result = [...companiesList];
+    try {
+      const res = await api.get('/companies', { params });
+      const items = (res.data || []).map(formatCompany);
+      const pagination = res.pagination || {};
 
-    if (params.search) {
-      const q = params.search.toLowerCase();
-      result = result.filter(
-        (c) =>
-          c.name.toLowerCase().includes(q) ||
-          c.industry.toLowerCase().includes(q) ||
-          c.city.toLowerCase().includes(q) ||
-          c.location.toLowerCase().includes(q) ||
-          c.companyId.toLowerCase().includes(q)
-      );
+      return {
+        companies: items,
+        total: pagination.total !== undefined ? pagination.total : items.length,
+        page: pagination.page || Number(params.page) || 1,
+        totalPages: pagination.totalPages || Math.ceil((pagination.total || items.length) / (params.limit || 9)) || 1
+      };
+    } catch (err) {
+      console.warn('[companyService] Fallback to local data:', err.message);
+      let result = [...initialCompanies];
+      if (params.search) {
+        const q = params.search.toLowerCase();
+        result = result.filter(
+          (c) =>
+            c.name.toLowerCase().includes(q) ||
+            c.industry?.toLowerCase().includes(q) ||
+            c.city?.toLowerCase().includes(q)
+        );
+      }
+      return {
+        companies: result.slice(0, Number(params.limit) || 9).map(formatCompany),
+        total: result.length,
+        page: Number(params.page) || 1,
+        totalPages: Math.ceil(result.length / (Number(params.limit) || 9)) || 1
+      };
     }
-    if (params.industry && params.industry !== 'All') {
-      result = result.filter((c) => c.industry === params.industry);
-    }
-    if (params.type && params.type !== 'All') {
-      result = result.filter((c) => c.type === params.type);
-    }
-    if (params.status && params.status !== 'All') {
-      result = result.filter((c) => c.status === params.status);
-    }
-
-    const total = result.length;
-    const page = Number(params.page) || 1;
-    const limit = Number(params.limit) || 9;
-    const start = (page - 1) * limit;
-    const paginated = result.slice(start, start + limit);
-
-    return {
-      companies: paginated,
-      total,
-      page,
-      totalPages: Math.ceil(total / limit) || 1
-    };
   },
 
   getStats: async () => {
-    await new Promise((resolve) => setTimeout(resolve, 40));
-    const totalCompanies = companiesList.length;
-    const activeCompanies = companiesList.filter((c) => c.status === 'Active').length;
-    const totalHires = companiesList.reduce((sum, c) => sum + (c.totalHires || 0), 0);
-    const activeDrivesCount = drivesList.filter((d) => d.status === 'Open' || d.status === 'In Progress').length;
-
-    return {
-      totalCompanies,
-      activeCompanies,
-      totalHires,
-      activeDrivesCount
-    };
+    try {
+      const res = await api.get('/companies/stats');
+      return res.data || res;
+    } catch (err) {
+      console.warn('[companyService] Fallback to stats:', err.message);
+      return {
+        totalCompanies: initialCompanies.length,
+        activeCompanies: initialCompanies.filter((c) => c.status === 'Active').length,
+        totalHires: initialCompanies.reduce((sum, c) => sum + (c.totalHires || 0), 0),
+        activeDrivesCount: 6
+      };
+    }
   },
 
   getById: async (id) => {
-    await new Promise((resolve) => setTimeout(resolve, 60));
-    const company = companiesList.find((c) => c.id === id || c.companyId === id);
-    if (!company) throw new Error('Company not found');
-    return company;
+    try {
+      const res = await api.get(`/companies/${id}`);
+      return formatCompany(res.data || res);
+    } catch (err) {
+      const company = initialCompanies.find((c) => c.id === id || c.companyId === id || c._id === id);
+      if (!company) throw new Error('Company not found');
+      return formatCompany(company);
+    }
   },
 
   getCompanyDrives: async (companyId, companyName) => {
-    await new Promise((resolve) => setTimeout(resolve, 60));
-    return drivesList.filter(
-      (d) => d.companyId === companyId || (companyName && d.companyName.toLowerCase() === companyName.toLowerCase())
-    );
+    try {
+      const res = await api.get('/drives', { params: { company: companyId || companyName } });
+      return (res.data || []).map((d) => ({ ...d, id: d._id || d.id }));
+    } catch (err) {
+      return [];
+    }
   },
 
   getCompanyPlacedStudents: async (companyName) => {
-    await new Promise((resolve) => setTimeout(resolve, 60));
-    if (!companyName) return [];
-    return studentsList.filter(
-      (s) => s.placedCompany && s.placedCompany.toLowerCase().includes(companyName.toLowerCase())
-    );
+    try {
+      const res = await api.get('/students', { params: { search: companyName } });
+      return (res.data || []).filter((s) => s.placedCompany && s.placedCompany.toLowerCase().includes((companyName || '').toLowerCase()));
+    } catch (err) {
+      return [];
+    }
   },
 
   create: async (companyData) => {
-    await new Promise((resolve) => setTimeout(resolve, 80));
-    const newCompany = {
-      ...companyData,
-      id: `comp-${Date.now()}`,
-      companyId: companyData.companyId || `COMP${String(companiesList.length + 1).padStart(3, '0')}`,
-      status: companyData.status || 'Active',
-      totalHires: 0,
-      activeDrivesCount: 0,
-      createdAt: new Date().toISOString()
-    };
-    companiesList.unshift(newCompany);
-    return newCompany;
+    const res = await api.post('/companies', companyData);
+    return formatCompany(res.data || res);
   },
 
   update: async (id, companyData) => {
-    await new Promise((resolve) => setTimeout(resolve, 80));
-    const index = companiesList.findIndex((c) => c.id === id || c.companyId === id);
-    if (index === -1) throw new Error('Company not found');
-
-    const updated = {
-      ...companiesList[index],
-      ...companyData,
-      updatedAt: new Date().toISOString()
-    };
-    companiesList[index] = updated;
-    return updated;
+    const res = await api.put(`/companies/${id}`, companyData);
+    return formatCompany(res.data || res);
   },
 
   delete: async (id) => {
-    await new Promise((resolve) => setTimeout(resolve, 80));
-    companiesList = companiesList.filter((c) => c.id !== id && c.companyId !== id);
-    return { success: true };
+    const res = await api.delete(`/companies/${id}`);
+    return res.data || res;
   }
 };
+
+export default companyService;
