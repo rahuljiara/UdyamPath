@@ -26,6 +26,7 @@ import AuditLogs from '../pages/audit/AuditLogs';
 import Notifications from '../pages/notifications/Notifications';
 import Profile from '../pages/profile/Profile';
 import Login from '../pages/auth/Login';
+import Register from '../pages/auth/Register';
 import NotFound from '../pages/NotFound';
 import RoleRoute from './RoleRoute';
 import { USER_ROLES } from '../context/AuthContext';
@@ -34,8 +35,9 @@ import { ROUTES } from './paths';
 const AppRoutes = () => {
   return (
     <Routes>
-      {/* Standalone Authentication Route */}
+      {/* Standalone Authentication Routes */}
       <Route path={ROUTES.LOGIN} element={<Login />} />
+      <Route path={ROUTES.REGISTER} element={<Register />} />
 
       <Route element={<AppLayout />}>
         {/* Default route redirect to dashboard */}
@@ -43,7 +45,14 @@ const AppRoutes = () => {
         <Route path={ROUTES.DASHBOARD} element={<Dashboard />} />
 
         {/* Students Module */}
-        <Route path={ROUTES.STUDENTS.ROOT} element={<Students />} />
+        <Route
+          path={ROUTES.STUDENTS.ROOT}
+          element={
+            <RoleRoute allowedRoles={[USER_ROLES.ADMIN, USER_ROLES.MANAGER]}>
+              <Students />
+            </RoleRoute>
+          }
+        />
         <Route
           path={ROUTES.STUDENTS.CREATE}
           element={
@@ -66,7 +75,7 @@ const AppRoutes = () => {
         <Route
           path={ROUTES.COMPANIES.ROOT}
           element={
-            <RoleRoute allowedRoles={[USER_ROLES.ADMIN, USER_ROLES.MANAGER]}>
+            <RoleRoute allowedRoles={[USER_ROLES.ADMIN, USER_ROLES.MANAGER, USER_ROLES.RECRUITER]}>
               <Companies />
             </RoleRoute>
           }

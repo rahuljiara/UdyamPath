@@ -1,0 +1,30 @@
+flowchart TB
+    subgraph ClientLayer ["Client Layer (React 18 + Vite)"]
+        UI["Tailwind CSS + Recharts UI"]
+        AuthCtx["AuthContext & RoleRoute"]
+        AxiosClients["Modular Axios Services"]
+    end
+
+    subgraph Gateway ["Vite Dev Proxy / Nginx Reverse Proxy"]
+        Proxy["Proxy: /api -> Backend API"]
+    end
+
+    subgraph ServerLayer ["Backend Layer (Express.js REST API)"]
+        Security["Helmet + CORS + RateLimiter"]
+        AuthMiddleware["JWT Verification & RBAC Guards"]
+        Controllers["Controllers (12 Modules)"]
+    end
+
+    subgraph DataLayer ["Data Layer (MongoDB Atlas / Mongoose)"]
+        MongooseModels["9 Relational-Ready Mongoose Models"]
+        DB[(MongoDB Cluster)]
+    end
+
+    UI --> AuthCtx
+    AuthCtx --> AxiosClients
+    AxiosClients --> Proxy
+    Proxy --> Security
+    Security --> AuthMiddleware
+    AuthMiddleware --> Controllers
+    Controllers --> MongooseModels
+    MongooseModels --> DB

@@ -1,17 +1,20 @@
 import React, { useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import {
   Lock,
   Mail,
   ArrowRight,
   Eye,
   EyeOff,
-  AlertCircle
+  AlertCircle,
+  UserPlus,
+  Building2
 } from 'lucide-react';
 import Button from '../../components/common/Button';
 import { useAuth } from '../../context/AuthContext';
 import { ROUTES } from '../../routes/paths';
 import logoImg from '../../assets/logo/Logo.png';
+import DEMO_ACCOUNTS from '../../data/demoAccounts';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -74,7 +77,24 @@ const Login = () => {
         </div>
 
         {/* Main Card */}
-        <div className="bg-white text-text-primary rounded-2xl border border-slate-200/80 p-6 sm:p-8 shadow-xl space-y-6">
+        <div className="bg-white text-text-primary rounded-2xl border border-slate-200/80 p-6 sm:p-8 shadow-xl space-y-5">
+          {/* Top Auth Nav Tabs */}
+          <div className="flex items-center p-1 bg-slate-100 rounded-xl">
+            <button
+              type="button"
+              className="flex-1 py-1.5 text-xs font-bold rounded-lg bg-white text-primary shadow-xs transition-all text-center"
+            >
+              Sign In
+            </button>
+            <Link
+              to={ROUTES.REGISTER}
+              className="flex-1 py-1.5 text-xs font-semibold rounded-lg text-slate-600 hover:text-slate-900 transition-all text-center flex items-center justify-center gap-1"
+            >
+              <UserPlus className="w-3.5 h-3.5 text-slate-400" />
+              <span>Sign Up Employee</span>
+            </Link>
+          </div>
+
           <div className="space-y-1">
             <h2 className="text-lg font-bold text-text-primary">Sign in to your account</h2>
             <p className="text-xs text-text-muted">
@@ -166,7 +186,87 @@ const Login = () => {
             >
               Sign In to Portal
             </Button>
+
+            <div className="pt-1 flex items-center justify-between text-xs">
+              <span className="text-text-muted">New hiring partner or employee?</span>
+              <Link
+                to={ROUTES.REGISTER}
+                className="font-semibold text-primary hover:underline flex items-center gap-1"
+              >
+                <UserPlus className="w-3.5 h-3.5" />
+                <span>Sign Up Employee →</span>
+              </Link>
+            </div>
           </form>
+
+          {/* Corporate Employee Sign Up Callout */}
+          <div className="p-3 rounded-xl bg-indigo-50/80 border border-indigo-100 flex items-center justify-between gap-3">
+            <div className="space-y-0.5 min-w-0">
+              <p className="text-xs font-bold text-indigo-950 flex items-center gap-1.5 truncate">
+                <Building2 className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
+                <span>Corporate Recruiter / Employee?</span>
+              </p>
+              <p className="text-[11px] text-indigo-700 truncate">
+                Register company account to publish campus placement drives
+              </p>
+            </div>
+            <Link
+              to={ROUTES.REGISTER}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold shadow-xs shrink-0 transition-colors"
+            >
+              <UserPlus className="w-3.5 h-3.5" />
+              <span>Sign Up</span>
+            </Link>
+          </div>
+
+          {/* Quick Demo Accounts 1-Click Login */}
+          <div className="pt-2 border-t border-slate-100 space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] font-bold text-slate-700 uppercase tracking-wider">
+                Quick Demo Accounts (1-Click Login)
+              </span>
+              <span className="text-[10px] text-primary font-medium">Default: password123</span>
+            </div>
+
+            <div className="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto pr-1">
+              {DEMO_ACCOUNTS.map((acc) => (
+                <button
+                  key={acc.email}
+                  type="button"
+                  disabled={loading}
+                  onClick={async () => {
+                    setEmail(acc.email);
+                    setPassword(acc.password);
+                    setErrorMsg('');
+                    setLoading(true);
+                    try {
+                      await login(acc.email, acc.password);
+                      navigate(redirectPath, { replace: true });
+                    } catch (err) {
+                      setErrorMsg(err.message || 'Login failed');
+                    } finally {
+                      setLoading(false);
+                    }
+                  }}
+                  className="flex items-start gap-2 p-2 rounded-xl text-left border border-slate-200/90 hover:border-primary/50 hover:bg-primary-soft/20 transition-all group disabled:opacity-50"
+                >
+                  <img
+                    src={acc.avatar}
+                    alt={acc.name}
+                    className="w-7 h-7 rounded-lg object-cover shrink-0 mt-0.5 border border-slate-200 group-hover:scale-105 transition-transform"
+                  />
+                  <div className="min-w-0 flex-1 space-y-0.5">
+                    <p className="text-[11px] font-bold text-text-primary truncate leading-tight group-hover:text-primary">
+                      {acc.roleLabel}
+                    </p>
+                    <p className="text-[10px] text-text-muted truncate leading-none">
+                      {acc.name}
+                    </p>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
 
         {/* Footer */}

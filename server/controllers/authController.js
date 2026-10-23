@@ -13,8 +13,19 @@ import User from '../models/User.js';
  * @access  Public
  */
 export const register = asyncHandler(async (req, res) => {
-  const { name, email, password, role, avatar } = req.body;
-  const result = await registerUser({ name, email, password, role, avatar });
+  const { name, email, password, role, avatar, company, department, deptCode, studentId, phone } = req.body;
+  const result = await registerUser({
+    name,
+    email,
+    password,
+    role,
+    avatar,
+    company,
+    department,
+    deptCode,
+    studentId,
+    phone
+  });
   return sendSuccess(res, result, 'User registered successfully', 201);
 });
 

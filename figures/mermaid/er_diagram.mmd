@@ -1,0 +1,79 @@
+erDiagram
+    USERS {
+        ObjectId _id PK
+        string name
+        string email
+        string password
+        enum role "ADMIN, TPO, HOD, STUDENT, RECRUITER"
+        boolean isActive
+    }
+    DEPARTMENTS {
+        ObjectId _id PK
+        string name
+        string code "CSE, IT, ECE, EEE, MECH"
+        ObjectId hod FK "Ref: Users"
+        number intake
+    }
+    COMPANIES {
+        ObjectId _id PK
+        string name
+        enum category "Product, Service, Core"
+        enum tier "Tier 1, 2, 3"
+        string website
+    }
+    STUDENTS {
+        ObjectId _id PK
+        ObjectId user FK "Ref: Users"
+        string rollNumber
+        ObjectId department FK "Ref: Departments"
+        number cgpa
+        number backlogs
+        array skills
+    }
+    PLACEMENT_DRIVES {
+        ObjectId _id PK
+        ObjectId company FK "Ref: Companies"
+        string title
+        object packageDetails
+        object eligibilityCriteria
+        enum status
+    }
+    APPLICATIONS {
+        ObjectId _id PK
+        ObjectId student FK "Ref: Students"
+        ObjectId drive FK "Ref: Placement_Drives"
+        string currentStage
+        enum status "Applied, Shortlisted, Selected"
+    }
+    INTERVIEWS {
+        ObjectId _id PK
+        ObjectId application FK "Ref: Applications"
+        string roundName
+        date scheduledDate
+        string feedback
+    }
+    OFFERS {
+        ObjectId _id PK
+        ObjectId student FK "Ref: Students"
+        ObjectId company FK "Ref: Companies"
+        ObjectId drive FK "Ref: Placement_Drives"
+        number ctc
+        enum status "Offered, Accepted, Rejected"
+    }
+    PLACEMENTS {
+        ObjectId _id PK
+        ObjectId student FK "Ref: Students"
+        ObjectId company FK "Ref: Companies"
+        number package
+        date joiningDate
+    }
+
+    USERS ||--o| STUDENTS : "Profile mapping"
+    DEPARTMENTS ||--o{ STUDENTS : "Enrolls"
+    USERS ||--o| DEPARTMENTS : "HOD of"
+    COMPANIES ||--o{ PLACEMENT_DRIVES : "Conducts"
+    PLACEMENT_DRIVES ||--o{ APPLICATIONS : "Receives"
+    STUDENTS ||--o{ APPLICATIONS : "Submits"
+    APPLICATIONS ||--o{ INTERVIEWS : "Goes through"
+    APPLICATIONS ||--o| OFFERS : "Results in"
+    OFFERS ||--o| PLACEMENTS : "Converts to"

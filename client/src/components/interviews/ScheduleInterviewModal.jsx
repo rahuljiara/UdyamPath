@@ -4,6 +4,7 @@ import Modal from '../common/Modal';
 import Button from '../common/Button';
 import { studentService } from '../../services/studentService';
 import { companyService } from '../../services/companyService';
+import { formatDateForInput } from '../../utils/formatters';
 
 const roundTypes = [
   'Online Coding Assessment',
@@ -24,6 +25,7 @@ const ScheduleInterviewModal = ({
 }) => {
   const [students, setStudents] = useState([]);
   const [companies, setCompanies] = useState([]);
+  const todayStr = formatDateForInput(new Date(), 0);
 
   const [formData, setFormData] = useState({
     studentId: '',
@@ -34,7 +36,7 @@ const ScheduleInterviewModal = ({
     companyLogo: '',
     position: '',
     round: 'Technical Interview 1',
-    date: new Date().toISOString().slice(0, 10),
+    date: todayStr,
     startTime: '10:00 AM',
     endTime: '11:00 AM',
     mode: 'Online (MS Teams)',
@@ -98,7 +100,7 @@ const ScheduleInterviewModal = ({
         companyLogo: initialData.companyLogo || '',
         position: initialData.position || '',
         round: initialData.round || 'Technical Interview 1',
-        date: initialData.date || new Date().toISOString().slice(0, 10),
+        date: initialData.date ? initialData.date.slice(0, 10) : todayStr,
         startTime: initialData.startTime || '10:00 AM',
         endTime: initialData.endTime || '11:00 AM',
         mode: initialData.mode || 'Online (MS Teams)',
@@ -150,7 +152,11 @@ const ScheduleInterviewModal = ({
     if (!formData.studentName) errs.studentName = 'Student is required';
     if (!formData.companyName) errs.companyName = 'Company is required';
     if (!formData.position) errs.position = 'Position is required';
-    if (!formData.date) errs.date = 'Date is required';
+    if (!formData.date) {
+      errs.date = 'Date is required';
+    } else if (!isEdit && formData.date < todayStr) {
+      errs.date = 'Interview date cannot be in the past';
+    }
     if (!formData.interviewer) errs.interviewer = 'Interviewer name is required';
     return errs;
   };
@@ -270,10 +276,14 @@ const ScheduleInterviewModal = ({
             <input
               type="date"
               name="date"
+              min={!isEdit ? todayStr : undefined}
               value={formData.date}
               onChange={handleChange}
-              className="w-full bg-white border border-border-color rounded-lg px-3 py-2 text-text-primary focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+              className={`w-full bg-white border rounded-lg px-3 py-2 text-text-primary focus:outline-none focus:ring-2 focus:ring-primary/20 ${
+                errors.date ? 'border-rose-400 focus:border-rose-500' : 'border-border-color focus:border-primary'
+              }`}
             />
+            {errors.date && <p className="text-rose-500 text-[11px] mt-1">{errors.date}</p>}
           </div>
 
           {/* Timing */}

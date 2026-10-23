@@ -2,8 +2,14 @@ import initialDrives from '../data/placementDrives.json';
 import initialInterviews from '../data/interviews.json';
 
 export const calendarService = {
-  getEvents: async ({ month = 3, year = 2025, eventType = 'All', company = 'All' } = {}) => {
+  getEvents: async ({ month, year, eventType = 'All', company = 'All' } = {}) => {
     await new Promise((resolve) => setTimeout(resolve, 60));
+
+    const today = new Date();
+    const targetYear = year || today.getFullYear();
+    const targetMonth = month || (today.getMonth() + 1);
+    const yStr = String(targetYear);
+    const mStr = String(targetMonth).padStart(2, '0');
 
     const events = [
       // 1. Placement Drives
@@ -11,7 +17,7 @@ export const calendarService = {
         id: 'evt-1',
         title: 'Microsoft SDE-1 Placement Drive',
         type: 'Drive',
-        date: '2025-03-28',
+        date: `${yStr}-${mStr}-28`,
         time: '09:00 AM - 05:00 PM',
         company: 'Microsoft India',
         location: 'Online Assessment & Virtual Panels',
@@ -23,7 +29,7 @@ export const calendarService = {
         id: 'evt-2',
         title: 'Zomato Backend Engineer Drive',
         type: 'Drive',
-        date: '2025-03-24',
+        date: `${yStr}-${mStr}-24`,
         time: '10:00 AM - 04:00 PM',
         company: 'Zomato',
         location: 'Gurugram HQ / Remote',
@@ -35,7 +41,7 @@ export const calendarService = {
         id: 'evt-3',
         title: 'Deloitte USI Tech Consulting Drive',
         type: 'Drive',
-        date: '2025-03-22',
+        date: `${yStr}-${mStr}-22`,
         time: '09:30 AM - 06:00 PM',
         company: 'Deloitte USI',
         location: 'Campus Main Auditorium & Seminar Halls',
@@ -47,7 +53,7 @@ export const calendarService = {
         id: 'evt-4',
         title: 'TCS Digital NQT Assessment',
         type: 'Assessment',
-        date: '2025-03-16',
+        date: `${yStr}-${mStr}-16`,
         time: '11:00 AM - 01:00 PM',
         company: 'Tata Consultancy Services',
         location: 'Computer Center Labs 1 - 4',
@@ -61,7 +67,7 @@ export const calendarService = {
         id: 'evt-5',
         title: 'Deadline: Microsoft SDE-1 Applications',
         type: 'Deadline',
-        date: '2025-03-25',
+        date: `${yStr}-${mStr}-25`,
         time: '11:59 PM',
         company: 'Microsoft India',
         location: 'UdyamPath Portal',
@@ -73,7 +79,7 @@ export const calendarService = {
         id: 'evt-6',
         title: 'Deadline: Zomato Applications',
         type: 'Deadline',
-        date: '2025-03-20',
+        date: `${yStr}-${mStr}-20`,
         time: '11:59 PM',
         company: 'Zomato',
         location: 'UdyamPath Portal',
@@ -85,7 +91,7 @@ export const calendarService = {
         id: 'evt-7',
         title: 'Deadline: Deloitte USI Applications',
         type: 'Deadline',
-        date: '2025-03-18',
+        date: `${yStr}-${mStr}-18`,
         time: '11:59 PM',
         company: 'Deloitte USI',
         location: 'UdyamPath Portal',
@@ -99,7 +105,7 @@ export const calendarService = {
         id: 'evt-8',
         title: 'Pre-Placement Talk: Cisco Systems',
         type: 'Pre-Placement Talk',
-        date: '2025-03-14',
+        date: `${yStr}-${mStr}-14`,
         time: '04:00 PM - 05:30 PM',
         company: 'Cisco Systems',
         location: 'Seminar Hall 1 & Live Webcast',
@@ -112,7 +118,7 @@ export const calendarService = {
         id: 'evt-9',
         title: 'Technical Round 2: Devansh Verma',
         type: 'Interview',
-        date: '2025-03-15',
+        date: `${yStr}-${mStr}-15`,
         time: '10:30 AM - 11:30 AM',
         company: 'Microsoft India',
         location: 'MS Teams',
@@ -123,7 +129,7 @@ export const calendarService = {
         id: 'evt-10',
         title: 'Case Study & GD: Rhea Chatterjee',
         type: 'Interview',
-        date: '2025-03-15',
+        date: `${yStr}-${mStr}-15`,
         time: '02:00 PM - 03:15 PM',
         company: 'Deloitte USI',
         location: 'Campus Seminar Hall 2',

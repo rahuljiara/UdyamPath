@@ -17,11 +17,14 @@ export const getStudents = asyncHandler(async (req, res) => {
   const query = {};
 
   // HOD scope constraint
-  if (req.user && req.user.role === 'HOD' && req.user.department) {
-    query.$or = [
-      { deptCode: req.user.department },
-      { department: new RegExp(req.user.department, 'i') }
-    ];
+  if (req.user && req.user.role === 'HOD') {
+    const deptFilter = req.user.deptCode || req.user.department;
+    if (deptFilter) {
+      query.$or = [
+        { deptCode: deptFilter },
+        { department: new RegExp(deptFilter, 'i') }
+      ];
+    }
   }
 
   // Query parameter filters
@@ -91,11 +94,14 @@ export const getStudents = asyncHandler(async (req, res) => {
  */
 export const getStudentStats = asyncHandler(async (req, res) => {
   const query = {};
-  if (req.user && req.user.role === 'HOD' && req.user.department) {
-    query.$or = [
-      { deptCode: req.user.department },
-      { department: new RegExp(req.user.department, 'i') }
-    ];
+  if (req.user && req.user.role === 'HOD') {
+    const deptFilter = req.user.deptCode || req.user.department;
+    if (deptFilter) {
+      query.$or = [
+        { deptCode: deptFilter },
+        { department: new RegExp(deptFilter, 'i') }
+      ];
+    }
   }
 
   const students = await Student.find(query).select('placementStatus isEligible cgpa');

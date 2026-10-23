@@ -1,7 +1,18 @@
 import User from '../models/User.js';
 import generateToken from '../utils/generateToken.js';
 
-export const registerUser = async ({ name, email, password, role, avatar }) => {
+export const registerUser = async ({
+  name,
+  email,
+  password,
+  role,
+  avatar,
+  company,
+  department,
+  deptCode,
+  studentId,
+  phone
+}) => {
   const normalizedEmail = email.toLowerCase().trim();
 
   // Check if user already exists
@@ -13,8 +24,9 @@ export const registerUser = async ({ name, email, password, role, avatar }) => {
   }
 
   // Normalize role
-  let userRole = (role || 'STUDENT').toUpperCase();
+  let userRole = (role || 'RECRUITER').toUpperCase();
   if (userRole === 'MANAGER') userRole = 'HOD';
+  if (userRole === 'EMPLOYEE') userRole = 'RECRUITER';
 
   // Create user (password will be hashed via Mongoose pre-save)
   const user = await User.create({
@@ -22,7 +34,11 @@ export const registerUser = async ({ name, email, password, role, avatar }) => {
     email: normalizedEmail,
     password,
     role: userRole,
-    avatar: avatar || ''
+    avatar: avatar || '',
+    company: company || '',
+    department: department || '',
+    deptCode: deptCode || '',
+    studentId: studentId || ''
   });
 
   const token = generateToken(user._id, user.role);
@@ -30,10 +46,16 @@ export const registerUser = async ({ name, email, password, role, avatar }) => {
   return {
     user: {
       id: user._id.toString(),
+      _id: user._id.toString(),
       name: user.name,
       email: user.email,
       role: user.role,
+      rawRole: user.role,
       avatar: user.avatar,
+      company: user.company || '',
+      department: user.department || '',
+      deptCode: user.deptCode || '',
+      studentId: user.studentId || '',
       isActive: user.isActive
     },
     token
@@ -77,6 +99,12 @@ export const loginUser = async ({ email, password }) => {
       name: user.name,
       email: user.email,
       role: user.role,
+      rawRole: user.role,
+      department: user.department || '',
+      deptCode: user.deptCode || '',
+      studentId: user.studentId || '',
+      cgpa: user.cgpa,
+      company: user.company || '',
       avatar: user.avatar,
       isActive: user.isActive,
       lastLogin: user.lastLogin
@@ -92,7 +120,22 @@ export const getUserProfile = async (userId) => {
     error.statusCode = 404;
     throw error;
   }
-  return user;
+  return {
+    id: user._id.toString(),
+    _id: user._id.toString(),
+    name: user.name,
+    email: user.email,
+    role: user.role,
+    rawRole: user.role,
+    department: user.department || '',
+    deptCode: user.deptCode || '',
+    studentId: user.studentId || '',
+    cgpa: user.cgpa,
+    company: user.company || '',
+    avatar: user.avatar,
+    isActive: user.isActive,
+    lastLogin: user.lastLogin
+  };
 };
 
 export default {

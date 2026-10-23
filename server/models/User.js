@@ -34,6 +34,25 @@ const userSchema = new mongoose.Schema(
       default: 'STUDENT',
       uppercase: true
     },
+    department: {
+      type: String,
+      default: ''
+    },
+    deptCode: {
+      type: String,
+      default: ''
+    },
+    studentId: {
+      type: String,
+      default: ''
+    },
+    cgpa: {
+      type: Number
+    },
+    company: {
+      type: String,
+      default: ''
+    },
     avatar: {
       type: String,
       default: ''

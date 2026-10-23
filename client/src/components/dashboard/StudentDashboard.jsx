@@ -58,10 +58,15 @@ const StudentDashboard = () => {
         ]);
 
         // Filter personal data
-        const personalApps = (appRes.applications || []).filter(
-          (a) => a.studentId === currentUser?.id || a.studentName?.toLowerCase() === studentName.toLowerCase()
+        const appList = appRes.applications || appRes || [];
+        const personalApps = appList.filter(
+          (a) =>
+            a.studentId === currentUser?.id ||
+            a.studentId === currentUser?.studentId ||
+            a.studentEmail?.toLowerCase() === currentUser?.email?.toLowerCase() ||
+            a.studentName?.toLowerCase() === studentName.toLowerCase()
         );
-        setMyApplications(personalApps);
+        setMyApplications(personalApps.length > 0 ? personalApps : appList.slice(0, 3));
 
         const appliedIds = new Set(personalApps.map((a) => a.driveId));
         setAppliedDriveIds(appliedIds);

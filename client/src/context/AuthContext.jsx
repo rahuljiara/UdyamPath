@@ -21,24 +21,45 @@ const normalizeRole = (role) => {
 const formatUser = (user) => {
   if (!user) return null;
   const role = normalizeRole(user.role);
+  const rawRole = (user.rawRole || user.roleBadge || user.role || '').toUpperCase();
+  
   const roleTitle =
-    user.role === 'TPO'
+    user.roleTitle ||
+    (rawRole === 'TPO'
       ? 'Head TPO / Director'
-      : user.role === 'ADMIN'
+      : rawRole === 'ADMIN'
       ? 'Institutional Admin'
-      : user.role === 'HOD'
-      ? `HOD (${user.department || 'Department'})`
-      : user.role === 'RECRUITER'
-      ? 'Corporate Recruiter'
-      : 'Candidate (Student)';
+      : rawRole === 'HOD' || role === USER_ROLES.MANAGER
+      ? `HOD (${user.deptCode || user.department || 'Department'})`
+      : rawRole === 'RECRUITER' || role === USER_ROLES.RECRUITER
+      ? `Recruiter (${user.company || 'Partner'})`
+      : 'Candidate (Student)');
+
+  const roleBadge =
+    user.roleBadge ||
+    (rawRole === 'TPO'
+      ? 'TPO'
+      : rawRole === 'ADMIN'
+      ? 'ADMIN'
+      : rawRole === 'HOD' || role === USER_ROLES.MANAGER
+      ? `HOD ${user.deptCode || ''}`.trim()
+      : rawRole === 'RECRUITER' || role === USER_ROLES.RECRUITER
+      ? 'RECRUITER'
+      : 'STUDENT');
 
   return {
     ...user,
     id: user._id || user.id,
     _id: user._id || user.id,
     role,
-    roleTitle: user.roleTitle || roleTitle,
-    roleBadge: user.roleBadge || user.role || 'Member',
+    rawRole,
+    roleTitle,
+    roleBadge,
+    department: user.department || '',
+    deptCode: user.deptCode || (user.department?.includes('Computer') ? 'CSE' : user.department?.includes('Information') ? 'IT' : ''),
+    company: user.company || '',
+    studentId: user.studentId || '',
+    cgpa: user.cgpa,
     permissions: user.permissions || ['ALL']
   };
 };
@@ -101,6 +122,25 @@ export const AuthProvider = ({ children }) => {
     return formatted;
   };
 
+  const register = async (userData) => {
+    const data = await authService.register(userData);
+    const user = data.user || data;
+    const formatted = formatUser(user);
+    setCurrentUser(formatted);
+    localStorage.setItem('udyam_auth_user', JSON.stringify(formatted));
+    return formatted;
+  };
+
+  const switchUser = async (email, password = 'password123') => {
+    setLoading(true);
+    try {
+      const formatted = await login(email, password);
+      return formatted;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const logout = () => {
     authService.logout();
     setCurrentUser(null);
@@ -122,6 +162,8 @@ export const AuthProvider = ({ children }) => {
         role: currentRole,
         loading,
         login,
+        register,
+        switchUser,
         logout,
         hasPermission,
         isRole,
@@ -129,6 +171,8 @@ export const AuthProvider = ({ children }) => {
         isManager: isRole(USER_ROLES.MANAGER),
         isStudent: isRole(USER_ROLES.STUDENT),
         isRecruiter: isRole(USER_ROLES.RECRUITER),
+        isTpo: currentUser?.rawRole === 'TPO',
+        isHod: currentUser?.rawRole === 'HOD' || isRole(USER_ROLES.MANAGER),
         isAuthenticated: !!currentUser
       }}
     >

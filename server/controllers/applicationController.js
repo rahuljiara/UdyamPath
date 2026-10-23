@@ -32,8 +32,14 @@ export const getApplications = asyncHandler(async (req, res) => {
   }
 
   // If HOD, scope to their department
-  if (req.user.role === 'HOD' && req.user.department) {
-    query.studentDepartment = new RegExp(req.user.department, 'i');
+  if (req.user.role === 'HOD') {
+    const deptFilter = req.user.deptCode || req.user.department;
+    if (deptFilter) {
+      query.$or = [
+        { studentDepartment: new RegExp(deptFilter, 'i') },
+        { studentDepartment: new RegExp(req.user.department || deptFilter, 'i') }
+      ];
+    }
   }
 
   // Filters

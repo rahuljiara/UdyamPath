@@ -128,6 +128,25 @@ export const createDrive = asyncHandler(async (req, res) => {
     status
   } = req.body;
 
+  if (!applicationDeadline) {
+    res.status(400);
+    throw new Error('Application deadline is required');
+  }
+
+  const deadlineDate = new Date(applicationDeadline);
+  if (isNaN(deadlineDate.getTime())) {
+    res.status(400);
+    throw new Error('Invalid application deadline date');
+  }
+
+  const yesterday = new Date();
+  yesterday.setDate(yesterday.getDate() - 1);
+  yesterday.setHours(0, 0, 0, 0);
+  if (deadlineDate < yesterday) {
+    res.status(400);
+    throw new Error('Application deadline cannot be in the past');
+  }
+
   let companyDoc;
   if (companyId) {
     companyDoc = await Company.findById(companyId);
@@ -135,8 +154,9 @@ export const createDrive = asyncHandler(async (req, res) => {
     companyDoc = await Company.findOne({ name: new RegExp(`^${companyName}$`, 'i') });
   }
 
+  const currentYear = new Date().getFullYear();
   const finalDriveId =
-    driveId || `DRV${new Date().getFullYear()}${String((await PlacementDrive.countDocuments()) + 1).padStart(2, '0')}`;
+    driveId || `DRV${currentYear}${String((await PlacementDrive.countDocuments()) + 1).padStart(2, '0')}`;
 
   const existing = await PlacementDrive.findOne({ driveId: finalDriveId.toUpperCase() });
   if (existing) {
@@ -159,7 +179,7 @@ export const createDrive = asyncHandler(async (req, res) => {
     openings: Number(openings) || 1,
     applicationsCount: 0,
     shortlistedCount: 0,
-    applicationDeadline: new Date(applicationDeadline),
+    applicationDeadline: deadlineDate,
     driveDate: driveDate || '',
     eligibility: {
       minCgpa: Number(eligibility?.minCgpa) || 6.0,
@@ -168,7 +188,9 @@ export const createDrive = asyncHandler(async (req, res) => {
         ? eligibility.departments
         : ['Computer Science & Engineering', 'Information Technology'],
       courses: Array.isArray(eligibility?.courses) ? eligibility.courses : ['B.Tech'],
-      batches: Array.isArray(eligibility?.batches) ? eligibility.batches : ['2021-2025'],
+      batches: Array.isArray(eligibility?.batches) && eligibility.batches.length > 0
+        ? eligibility.batches
+        : [`${currentYear - 4}-${currentYear}`],
       requiredSkills: Array.isArray(eligibility?.requiredSkills) ? eligibility.requiredSkills : []
     },
     selectionProcess: Array.isArray(selectionProcess)

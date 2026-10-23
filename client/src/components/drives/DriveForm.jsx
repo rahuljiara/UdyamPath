@@ -5,6 +5,7 @@ import Button from '../common/Button';
 import Card from '../common/Card';
 import { companyService } from '../../services/companyService';
 import { ROUTES } from '../../routes/paths';
+import { formatDateForInput } from '../../utils/formatters';
 
 const departmentsList = [
   'Computer Science & Engineering',
@@ -14,12 +15,22 @@ const departmentsList = [
   'Mechanical Engineering'
 ];
 
+const currentYear = new Date().getFullYear();
 const coursesList = ['B.Tech', 'M.Tech', 'MCA', 'BCA'];
-const batchesList = ['2021-2025', '2022-2026', '2020-2024'];
+const batchesList = [
+  `${currentYear - 3}-${currentYear + 1}`,
+  `${currentYear - 4}-${currentYear}`,
+  `${currentYear - 2}-${currentYear + 2}`,
+  '2021-2025'
+].filter((v, idx, arr) => arr.indexOf(v) === idx);
 
 const DriveForm = ({ initialData, onSubmit, loading = false, isEdit = false }) => {
   const navigate = useNavigate();
   const [companies, setCompanies] = useState([]);
+
+  const todayStr = formatDateForInput(new Date(), 0);
+  const defaultDeadline = formatDateForInput(new Date(), 14);
+  const defaultDriveDate = formatDateForInput(new Date(), 21);
 
   const [formData, setFormData] = useState({
     title: initialData?.title || '',
@@ -33,8 +44,10 @@ const DriveForm = ({ initialData, onSubmit, loading = false, isEdit = false }) =
     openings: initialData?.openings || 10,
     applicationDeadline: initialData?.applicationDeadline
       ? initialData.applicationDeadline.slice(0, 10)
-      : '2025-03-30',
-    driveDate: initialData?.driveDate || '2025-04-05',
+      : defaultDeadline,
+    driveDate: initialData?.driveDate
+      ? (initialData.driveDate.length > 10 ? initialData.driveDate.slice(0, 10) : initialData.driveDate)
+      : defaultDriveDate,
     status: initialData?.status || 'Open',
     description: initialData?.description || '',
     minCgpa: initialData?.eligibility?.minCgpa || 7.0,
@@ -44,7 +57,7 @@ const DriveForm = ({ initialData, onSubmit, loading = false, isEdit = false }) =
       'Information Technology'
     ],
     courses: initialData?.eligibility?.courses || ['B.Tech'],
-    batches: initialData?.eligibility?.batches || ['2021-2025'],
+    batches: initialData?.eligibility?.batches || [`${currentYear - 4}-${currentYear}`],
     selectionProcess: Array.isArray(initialData?.selectionProcess)
       ? initialData.selectionProcess.join('\n')
       : initialData?.selectionProcess || 'Online Coding Assessment\nTechnical Round 1\nHR Interview'
@@ -107,7 +120,14 @@ const DriveForm = ({ initialData, onSubmit, loading = false, isEdit = false }) =
     if (!formData.companyName.trim()) errs.companyName = 'Company is required';
     if (!formData.ctc.trim()) errs.ctc = 'Offered CTC package is required';
     if (!formData.location.trim()) errs.location = 'Job location is required';
-    if (!formData.applicationDeadline) errs.applicationDeadline = 'Application deadline is required';
+    if (!formData.applicationDeadline) {
+      errs.applicationDeadline = 'Application deadline is required';
+    } else if (!isEdit && formData.applicationDeadline < todayStr) {
+      errs.applicationDeadline = 'Application deadline cannot be in the past';
+    }
+    if (formData.driveDate && formData.applicationDeadline && formData.driveDate < formData.applicationDeadline) {
+      errs.driveDate = 'Drive date should be on or after the application deadline';
+    }
     if (formData.departments.length === 0) errs.departments = 'Select at least one eligible department';
     return errs;
   };
@@ -256,10 +276,16 @@ const DriveForm = ({ initialData, onSubmit, loading = false, isEdit = false }) =
             <input
               type="date"
               name="applicationDeadline"
+              min={!isEdit ? todayStr : undefined}
               value={formData.applicationDeadline}
               onChange={handleChange}
-              className="w-full bg-white border border-border-color rounded-lg px-3 py-2 text-text-primary focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+              className={`w-full bg-white border rounded-lg px-3 py-2 text-text-primary focus:outline-none focus:ring-2 focus:ring-primary/20 ${
+                errors.applicationDeadline ? 'border-rose-400 focus:border-rose-500' : 'border-border-color focus:border-primary'
+              }`}
             />
+            {errors.applicationDeadline && (
+              <p className="text-rose-500 text-[11px] mt-1">{errors.applicationDeadline}</p>
+            )}
           </div>
 
           <div>
@@ -267,10 +293,16 @@ const DriveForm = ({ initialData, onSubmit, loading = false, isEdit = false }) =
             <input
               type="date"
               name="driveDate"
+              min={formData.applicationDeadline || todayStr}
               value={formData.driveDate}
               onChange={handleChange}
-              className="w-full bg-white border border-border-color rounded-lg px-3 py-2 text-text-primary focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+              className={`w-full bg-white border rounded-lg px-3 py-2 text-text-primary focus:outline-none focus:ring-2 focus:ring-primary/20 ${
+                errors.driveDate ? 'border-rose-400 focus:border-rose-500' : 'border-border-color focus:border-primary'
+              }`}
             />
+            {errors.driveDate && (
+              <p className="text-rose-500 text-[11px] mt-1">{errors.driveDate}</p>
+            )}
           </div>
 
           <div className="md:col-span-3">

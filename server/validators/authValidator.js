@@ -18,7 +18,7 @@ export const validateRegisterInput = (req, res, next) => {
   }
 
   if (role) {
-    const validRoles = ['ADMIN', 'TPO', 'HOD', 'STUDENT', 'RECRUITER', 'MANAGER'];
+    const validRoles = ['ADMIN', 'TPO', 'HOD', 'STUDENT', 'RECRUITER', 'MANAGER', 'EMPLOYEE'];
     if (!validRoles.includes(role.toUpperCase())) {
       errors.push(`Role must be one of: ${validRoles.join(', ')}`);
     }

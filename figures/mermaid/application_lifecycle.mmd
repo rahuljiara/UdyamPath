@@ -1,0 +1,20 @@
+stateDiagram-v2
+    [*] --> Applied: Student Applies
+    Applied --> Shortlisted: Recruiter Reviews Profile
+    Applied --> Rejected: Fails Eligibility / Review
+    
+    Shortlisted --> InterviewScheduled: HR/Technical Rounds Setup
+    InterviewScheduled --> InterviewConducted: Round Completed
+    
+    InterviewConducted --> Selected: Clears All Rounds
+    InterviewConducted --> Rejected: Fails Interview
+    
+    Selected --> OfferReleased: Salary & terms finalized
+    
+    OfferReleased --> OfferAccepted: Student Accepts
+    OfferReleased --> OfferRejected: Student Declines
+    
+    OfferAccepted --> Placed: Final Onboarding
+    Placed --> [*]
+    Rejected --> [*]
+    OfferRejected --> [*]

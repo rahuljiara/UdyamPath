@@ -47,3 +47,18 @@ export const getInitials = (name = '') => {
   }
   return name.slice(0, 2).toUpperCase();
 };
+
+/**
+ * Format Date into YYYY-MM-DD for HTML input[type="date"] with optional day offset
+ */
+export const formatDateForInput = (date = new Date(), offsetDays = 0) => {
+  const d = date instanceof Date ? new Date(date.getTime()) : new Date(date);
+  if (isNaN(d.getTime())) return '';
+  if (offsetDays) {
+    d.setDate(d.getDate() + offsetDays);
+  }
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};

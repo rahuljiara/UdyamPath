@@ -24,7 +24,7 @@ import { ROUTES } from '../../routes/paths';
 import logoImg from '../../assets/logo/Logo.png';
 
 const Sidebar = ({ isOpen, onClose }) => {
-  const { currentUser, role, isAdmin, isManager, isStudent } = useAuth();
+  const { currentUser, role, isAdmin, isManager, isStudent, isRecruiter } = useAuth();
 
   // 1. Navigation items tailored for Admin
   const adminMainNav = [
@@ -61,7 +61,7 @@ const Sidebar = ({ isOpen, onClose }) => {
     { name: 'Calendar', to: ROUTES.CALENDAR, icon: Calendar }
   ];
 
-  // 3. Navigation items tailored for Employee / Student Candidate
+  // 3. Navigation items tailored for Candidate / Student
   const studentMainNav = [
     { name: 'My Dashboard', to: ROUTES.DASHBOARD, icon: LayoutDashboard },
     { name: 'Explore & Apply Drives', to: ROUTES.DRIVES.ROOT, icon: Briefcase },
@@ -75,11 +75,52 @@ const Sidebar = ({ isOpen, onClose }) => {
     { name: 'Placement Calendar', to: ROUTES.CALENDAR, icon: Calendar }
   ];
 
-  const activeMainNav = isStudent ? studentMainNav : isManager ? managerMainNav : adminMainNav;
-  const activeMgmtNav = isStudent ? studentManagementNav : isManager ? managerManagementNav : adminManagementNav;
+  // 4. Navigation items tailored for Corporate Recruiter
+  const recruiterMainNav = [
+    { name: 'Recruiter Dashboard', to: ROUTES.DASHBOARD, icon: LayoutDashboard },
+    { name: 'Active Drives', to: ROUTES.DRIVES.ROOT, icon: Briefcase },
+    { name: 'Candidate Applications', to: ROUTES.APPLICATIONS.ROOT, icon: FileCheck2 },
+    { name: 'Interviews Scheduled', to: ROUTES.INTERVIEWS.ROOT, icon: CalendarCheck2 },
+    { name: 'Offers Extended', to: ROUTES.OFFERS.ROOT, icon: Award },
+    { name: 'Partner Companies', to: ROUTES.COMPANIES.ROOT, icon: Building2 }
+  ];
 
-  const sectionLabel1 = isStudent ? 'Candidate Portal' : isManager ? `${currentUser?.deptCode || 'CSE'} Department` : 'Main Menu';
-  const sectionLabel2 = isStudent ? 'Personal Career Tools' : isManager ? 'Analytics & Reports' : 'Management & System';
+  const recruiterManagementNav = [
+    { name: 'Hiring Calendar', to: ROUTES.CALENDAR, icon: Calendar },
+    { name: 'Company Profile', to: ROUTES.PROFILE, icon: UserCheck }
+  ];
+
+  const activeMainNav = isStudent
+    ? studentMainNav
+    : isManager
+    ? managerMainNav
+    : isRecruiter
+    ? recruiterMainNav
+    : adminMainNav;
+
+  const activeMgmtNav = isStudent
+    ? studentManagementNav
+    : isManager
+    ? managerManagementNav
+    : isRecruiter
+    ? recruiterManagementNav
+    : adminManagementNav;
+
+  const sectionLabel1 = isStudent
+    ? 'Candidate Portal'
+    : isManager
+    ? `${currentUser?.deptCode || 'CSE'} Department`
+    : isRecruiter
+    ? 'Corporate Hiring'
+    : 'Main Menu';
+
+  const sectionLabel2 = isStudent
+    ? 'Personal Career Tools'
+    : isManager
+    ? 'Analytics & Reports'
+    : isRecruiter
+    ? 'Recruitment Management'
+    : 'Management & System';
 
   return (
     <>
@@ -215,6 +256,8 @@ const Sidebar = ({ isOpen, onClose }) => {
                   ? 'bg-rose-100 text-rose-800'
                   : isManager
                   ? 'bg-indigo-100 text-indigo-800'
+                  : isRecruiter
+                  ? 'bg-purple-100 text-purple-800'
                   : 'bg-emerald-100 text-emerald-800'
               }`}
             >
@@ -222,7 +265,9 @@ const Sidebar = ({ isOpen, onClose }) => {
             </span>
           </div>
           <div className="text-[10px] text-text-muted px-2 flex items-center justify-between">
-            <span>{currentUser?.department || 'Batch 2021-2025'}</span>
+            <span className="truncate max-w-[140px]">
+              {currentUser?.company || currentUser?.department || 'Batch 2021-2025'}
+            </span>
             <span className="font-medium text-emerald-600">Active</span>
           </div>
         </div>

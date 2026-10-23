@@ -38,7 +38,7 @@ const CalendarPage = () => {
   const navigate = useNavigate();
 
   // Current viewed month and year
-  const [currentDate, setCurrentDate] = useState(new Date(2025, 2, 1)); // March 2025
+  const [currentDate, setCurrentDate] = useState(new Date());
   const [viewMode, setViewMode] = useState('grid'); // 'grid' | 'agenda'
   const [eventType, setEventType] = useState('All');
   const [events, setEvents] = useState([]);
